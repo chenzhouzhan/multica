@@ -25,6 +25,7 @@ import {
   CommandList,
 } from "@multica/ui/components/ui/command";
 import { useTheme } from "@multica/ui/components/common/theme-provider";
+import { useAppearanceStore } from "@multica/core/appearance";
 import type { SupportedLocale } from "@multica/core/i18n";
 import { useAuthStore } from "@multica/core/auth";
 import { useChatStore } from "@multica/core/chat";
@@ -84,6 +85,7 @@ export function PreferencesTab() {
       >
         <SettingsCard>
           <ThemeRow />
+          <ColorThemeRow />
         </SettingsCard>
       </SettingsSection>
 
@@ -136,6 +138,27 @@ function ThemeRow() {
             ["light", t(($) => $.preferences.theme.light)],
             ["dark", t(($) => $.preferences.theme.dark)],
             ["system", t(($) => $.preferences.theme.system)],
+          ]}
+        />
+      </div>
+    </SettingsRow>
+  );
+}
+
+function ColorThemeRow() {
+  const { t } = useT("settings");
+  const colorTheme = useAppearanceStore((s) => s.colorTheme);
+  const setColorTheme = useAppearanceStore((s) => s.setColorTheme);
+  return (
+    <SettingsRow anchor="color-theme" label={t(($) => $.preferences.color_theme.title)}>
+      <div role="group" aria-label={t(($) => $.preferences.color_theme.title)}>
+        <SegmentedToggle
+          value={colorTheme}
+          onChange={setColorTheme}
+          buttonClassName="px-3 py-1 text-label"
+          options={[
+            ["soft", t(($) => $.preferences.color_theme.soft)],
+            ["gray", t(($) => $.preferences.color_theme.gray)],
           ]}
         />
       </div>

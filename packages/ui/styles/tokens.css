@@ -340,3 +340,86 @@
     --find-match-active: oklch(0.76 0.18 60);
     --find-match-foreground: oklch(0.18 0.02 92);
 }
+
+/* Soft uses neutral work surfaces, a lavender shell, and restrained mint
+   accents. Gray retains the neutral defaults above. */
+:root[data-color-theme="soft"] {
+    --app-shell: #f1f0f7;
+    --page-canvas: #ffffff;
+    --foreground: #27272b;
+    --surface: #ffffff;
+    --surface-foreground: #27272b;
+    --surface-raised: #ffffff;
+    --surface-hover: #f5f4f8;
+    --surface-selected: #eaf5ee;
+    --surface-selected-foreground: #235744;
+    --surface-border: #e8e6ee;
+    --surface-shadow: 0 1px 3px rgb(35 30 50 / 4%);
+    --primary: #28282c;
+    --primary-foreground: #ffffff;
+    --secondary: #f3f2f6;
+    --secondary-foreground: #43414c;
+    --muted: #f6f5f8;
+    --muted-foreground: #64636d;
+    --faint-foreground: #7a7883;
+    --accent: #f4f2f8;
+    --accent-foreground: #41394f;
+    --border: #eeedf2;
+    --input: #d9d7e1;
+    --ring: #7d6aa8;
+    --sidebar: #faf9fc;
+    --sidebar-foreground: #27272b;
+    --sidebar-primary: #28282c;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #ece9f7;
+    --sidebar-accent-foreground: #514377;
+    --sidebar-border: #eeedf2;
+    --sidebar-ring: #7d6aa8;
+    --brand: #276c57;
+    --brand-foreground: #ffffff;
+    --chart-1: #337b64;
+    --chart-2: #6a9c89;
+    --chart-3: #9bbdac;
+    --chart-4: #c3d9cb;
+    --chart-5: #e2eee6;
+}
+
+:root.dark[data-color-theme="soft"] {
+    --app-shell: #18191c;
+    --page-canvas: #1e1f23;
+    --foreground: #eeeef0;
+    --surface: #24262b;
+    --surface-foreground: #eeeef0;
+    --surface-raised: #2a2c32;
+    --surface-hover: #2e3036;
+    --surface-selected: #293e35;
+    --surface-selected-foreground: #b6e2cc;
+    --surface-border: #393a43;
+    --primary: #eeeef0;
+    --primary-foreground: #24262b;
+    --secondary: #2c2d34;
+    --secondary-foreground: #eeeef0;
+    --muted: #292a30;
+    --muted-foreground: #b1afb9;
+    --faint-foreground: #918e9c;
+    --accent: #302d38;
+    --accent-foreground: #e0d4f4;
+    --border: #33343c;
+    --input: #484751;
+    --ring: #b2a4da;
+    --sidebar: #202126;
+    --sidebar-foreground: #eeeef0;
+    --sidebar-primary: #eeeef0;
+    --sidebar-primary-foreground: #24262b;
+    --sidebar-accent: #373142;
+    --sidebar-accent-foreground: #e0d4f4;
+    --sidebar-border: #33343c;
+    --sidebar-ring: #b2a4da;
+    --brand: #9ed6bc;
+    --brand-foreground: #1c3026;
+    --chart-1: #9ed6bc;
+    --chart-2: #7bb399;
+    --chart-3: #568b72;
+    --chart-4: #39634f;
+    --chart-5: #294737;
+}

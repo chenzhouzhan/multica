@@ -163,6 +163,11 @@
       "dark": "ダーク",
       "system": "システム"
     },
+    "color_theme": {
+      "title": "テーマカラー",
+      "soft": "ソフト",
+      "gray": "グレー"
+    },
     "language": {
       "title": "言語",
       "english": "English",

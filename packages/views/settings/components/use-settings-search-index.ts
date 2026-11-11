@@ -53,6 +53,7 @@ export function useSettingsSearchIndex(
         description: t(($) => $.preferences.timezone.hint),
       },
       { tab: "preferences", anchor: "theme", title: t(($) => $.preferences.theme.title) },
+      { tab: "preferences", anchor: "color-theme", title: t(($) => $.preferences.color_theme.title) },
       {
         tab: "preferences",
         anchor: "sticky-comment-bar",

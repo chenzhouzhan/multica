@@ -104,6 +104,7 @@ vi.mock("@multica/core/auth", async () => {
 });
 
 import { PreferencesTab } from "./preferences-tab";
+import { APPEARANCE_STORAGE_KEY, useAppearanceStore } from "@multica/core/appearance";
 import { useCommentComposerStore } from "@multica/core/issues/stores";
 import { useIssueOpeningStore } from "@multica/core/issues/stores/issue-opening-store";
 import {
@@ -173,6 +174,25 @@ describe("PreferencesTab — Language switcher", () => {
 
     expect(mockSetTheme).toHaveBeenCalledWith("dark");
     expect(mockToastSuccess).not.toHaveBeenCalled();
+  });
+
+  it("changes and persists the color theme independently of light/dark mode", async () => {
+    useAppearanceStore.setState({ colorTheme: "soft" });
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    render(<PreferencesTab />, { wrapper: I18nWrapper });
+
+    const group = screen.getByRole("group", { name: "Color theme" });
+    expect(within(group).getByRole("button", { name: "Soft" })).toHaveAttribute(
+      "aria-pressed", "true",
+    );
+    await user.click(within(group).getByRole("button", { name: "Gray" }));
+    expect(within(group).getByRole("button", { name: "Gray" })).toHaveAttribute(
+      "aria-pressed", "true",
+    );
+    expect(JSON.parse(localStorage.getItem(APPEARANCE_STORAGE_KEY)!).state.colorTheme).toBe("gray");
+    expect(mockSetTheme).not.toHaveBeenCalled();
+    expect(mockUpdateMe).not.toHaveBeenCalled();
+    act(() => useAppearanceStore.getState().setColorTheme("soft"));
   });
 
   it.each([

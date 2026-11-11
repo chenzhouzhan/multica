@@ -9,6 +9,7 @@
     "test": "vitest run"
   },
   "exports": {
+    "./common/theme-provider": "./common/theme-provider.tsx",
     "./navigation": "./navigation/index.ts",
     "./common/actor-avatar": "./common/actor-avatar.tsx",
     "./common/cli-install-command": "./common/cli-install-command.tsx",

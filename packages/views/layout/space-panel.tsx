@@ -71,7 +71,7 @@ export function SpacePanel() {
             open ? "w-(--sidebar-width)" : "w-0",
           )}
         >
-          <div className="flex h-full w-(--sidebar-width) shrink-0 flex-col overflow-hidden border-r">
+          <div className="flex h-full w-(--sidebar-width) shrink-0 flex-col overflow-hidden border-r bg-sidebar">
             <SpacePanelContent space={space} />
           </div>
         </aside>

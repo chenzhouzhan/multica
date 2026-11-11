@@ -163,6 +163,11 @@
       "dark": "深色",
       "system": "跟隨系統"
     },
+    "color_theme": {
+      "title": "主題色",
+      "soft": "柔和",
+      "gray": "灰色"
+    },
     "language": {
       "title": "語言",
       "english": "English",

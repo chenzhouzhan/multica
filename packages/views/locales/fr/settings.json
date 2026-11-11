@@ -165,6 +165,11 @@
       "dark": "Sombre",
       "system": "Système"
     },
+    "color_theme": {
+      "title": "Couleur du thème",
+      "soft": "Doux",
+      "gray": "Gris"
+    },
     "language": {
       "title": "Langue",
       "english": "English",

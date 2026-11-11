@@ -1,7 +1,6 @@
 "use client"
 
-// Re-export the shared ThemeProvider from @multica/ui
-export { ThemeProvider } from "@multica/ui/components/common/theme-provider"
+export { ThemeProvider } from "@multica/views/common/theme-provider"
 
 // Suppress React 19 false-positive about next-themes' inline <script>.
 // The script works correctly; React 19 just warns about any <script> in components.

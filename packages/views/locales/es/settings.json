@@ -147,6 +147,11 @@
       "dark": "Oscuro",
       "system": "Sistema"
     },
+    "color_theme": {
+      "title": "Color del tema",
+      "soft": "Suave",
+      "gray": "Gris"
+    },
     "language": {
       "title": "Idioma",
       "english": "English",
