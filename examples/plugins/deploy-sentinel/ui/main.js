@@ -16,6 +16,7 @@
 
 const pending = new Map();
 const port = globalThis.__multicaPluginBridgePortV2;
+const root = document.getElementById("root");
 let sequence = 0;
 
 if (!(port instanceof MessagePort)) throw new Error("Multica surface bridge is unavailable");
@@ -58,8 +59,6 @@ async function invokeHook(hookKey, input) {
   if (result?.status !== "ok") throw new Error(result?.error ?? "The hook did not answer.");
   return result.output;
 }
-
-const root = document.getElementById("root");
 
 function render(html) {
   root.innerHTML = html;
@@ -105,6 +104,9 @@ async function correlate() {
     }
     render(`
       <p>${escapeHTML(result.summary)}</p>
+      <label for="rollback-reason">Rollback reason (at least 20 characters)</label>
+      <textarea id="rollback-reason" minlength="20" required
+                style="box-sizing:border-box; width:100%; background:var(--background); color:var(--foreground); border:1px solid var(--border)"></textarea>
       <ul class="deploys">${result.deploys.map(deployRow).join("")}</ul>
       <p class="muted">Issue: ${escapeHTML(issue?.title ?? "")}</p>
     `);
@@ -119,8 +121,9 @@ root.addEventListener("click", async (event) => {
   const deployId = event.target?.dataset?.rollback;
   if (!deployId) return;
 
-  const reason = prompt("Why is this deploy suspected? The approver reads this — write the evidence, not the conclusion.");
-  if (!reason) return;
+  const reasonField = root.querySelector("#rollback-reason");
+  if (!reasonField.reportValidity()) return;
+  const reason = reasonField.value.trim();
 
   event.target.disabled = true;
   try {

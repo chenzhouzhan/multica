@@ -16,7 +16,7 @@ that teaches an agent when to use any of it.
 | --- | --- | --- |
 | `incident-response` | skill resource | A `SKILL.md` becomes an ordinary workspace skill. Uninstall removes it. |
 | `correlate_deploys` | hook, `agent` + `manual` + `ui` | One hook, three callers. The agent gets a tool; a person gets a button; the panel gets a function. |
-| `request_rollback` | hook, `agent` + `manual` | A write action that **refuses**: too old, or no written reason. |
+| `request_rollback` | hook, `agent` + `manual` + `ui` | A write action that **refuses**: too old, or no written reason. |
 | `page_oncall` | hook, `event` | Fires on `issue.created` / `issue.status_changed`. Never blocks anything. |
 | `metrics` | hook, `mcp` transport | Adopts an external MCP server's tools, subject to admin approval. |
 | `incident` | `issue_panel` surface | The human view, in a sandboxed iframe with no credential. |
@@ -78,6 +78,9 @@ that appears, fill in the config form, then open the `metrics` approval panel
 and tick the tools you want agents to reach. Nothing under `metrics` is callable
 until you do — that is the whole difference between the `mcp` transport and an
 `http` hook.
+
+Set `metrics_credential` to the complete Authorization header value,
+`Bearer metrics-dev-token`, for the example server above.
 
 Note what `MULTICA_PLUGIN_DIR` does and does not cover. It is a publishing
 shortcut for the FRONTEND artifact only; the two servers above are still yours

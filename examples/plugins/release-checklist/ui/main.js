@@ -25,7 +25,6 @@ port.onmessage = (message) => {
   else entry.reject(Object.assign(new Error(payload.error), { status: payload.status }));
 };
 port.start();
-boot();
 
 function applyTheme(theme) {
   for (const [name, value] of Object.entries(theme ?? {})) {
@@ -211,3 +210,5 @@ function render(context, items, done) {
 
   resize();
 }
+
+boot();

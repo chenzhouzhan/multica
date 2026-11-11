@@ -1,5 +1,7 @@
 # Hello Panel
 
+[中文插件开发指南](../README.zh.md)
+
 The reference Multica plugin: one `issue_panel` surface that exercises every
 part of the Action API a v1 surface can reach.
 

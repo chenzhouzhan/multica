@@ -88,7 +88,7 @@
             "reason": { "type": "string", "description": "Why this deploy is suspected. Goes into the change record verbatim." }
           }
         },
-        "triggers": ["agent", "manual"],
+        "triggers": ["agent", "manual", "ui"],
         "transport": { "type": "http", "url": "https://sentinel.example.com/hooks/rollback" },
         "timeout_ms": 20000
       },

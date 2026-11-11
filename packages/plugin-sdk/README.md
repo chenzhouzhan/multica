@@ -1,5 +1,7 @@
 # @multica/plugin-sdk
 
+[中文插件开发指南](../../examples/plugins/README.zh.md)
+
 What a Multica plugin surface imports.
 
 ```js

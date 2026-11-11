@@ -61,8 +61,10 @@ function verifySignature(rawBody, signature, timestamp) {
     return { ok: false, reason: "timestamp outside the replay window" };
   }
 
-  const expected = createHmac("sha256", SIGNING_SECRET).update(`${timestamp}.${rawBody}`).digest("hex");
-  const provided = Buffer.from(signature, "utf8");
+  const signingKey = Buffer.from(SIGNING_SECRET.replace(/^whsec_/, ""), "hex");
+  const expected = createHmac("sha256", signingKey).update(`${timestamp}.${rawBody}`).digest("hex");
+  const presented = String(signature).replace(/^v1=/, "");
+  const provided = Buffer.from(presented, "utf8");
   const computed = Buffer.from(expected, "utf8");
   // Length check first: timingSafeEqual throws on a mismatch rather than
   // returning false, and the length is not the secret.
