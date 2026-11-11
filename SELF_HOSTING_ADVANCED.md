@@ -1,5 +1,7 @@
 # Self-Hosting — Advanced Configuration
 
+[English](SELF_HOSTING_ADVANCED.md) | [简体中文](SELF_HOSTING_ADVANCED.zh.md)
+
 This document covers advanced configuration for self-hosted Multica deployments. For the quick start guide, see [SELF_HOSTING.md](SELF_HOSTING.md).
 
 ## Configuration

@@ -1,5 +1,7 @@
 # Self-Hosting Setup (for AI Agents)
 
+[English](SELF_HOSTING_AI.md) | [简体中文](SELF_HOSTING_AI.zh.md)
+
 This document is designed for AI agents to execute. Follow these steps exactly to deploy a local Multica instance and connect to it.
 
 ## Prerequisites

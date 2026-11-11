@@ -1,5 +1,7 @@
 # Self-Hosting Guide
 
+[English](SELF_HOSTING.md) | [简体中文](SELF_HOSTING.zh.md)
+
 Deploy Multica on your own infrastructure in minutes.
 
 ## Architecture
