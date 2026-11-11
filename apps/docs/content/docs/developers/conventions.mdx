@@ -55,7 +55,7 @@ If logic appears in both apps, it MUST be extracted to a shared package. There a
 - Booleans: `is_<state>` or `<state>_at` (timestamp form preferred for state changes)
 - Migration files: `NNN_descriptive_name.up.sql` + `.down.sql` — always provide both directions
 - Do not create database foreign keys or use cascade deletes or updates; enforce relationships and cleanup in the application layer.
-- Every index must use `CREATE INDEX CONCURRENTLY` or `CREATE UNIQUE INDEX CONCURRENTLY`, with each concurrent index in its own single-statement migration file.
+- Consolidate unreleased development schema changes into the feature's original migration, including final columns and ordinary indexes on new tables. Index builds on existing deployed tables use `CREATE [UNIQUE] INDEX CONCURRENTLY`, with each concurrent index in its own single-statement migration file.
 
 ### Go
 

@@ -71,7 +71,7 @@ Installed desktop clients may talk to newer backends. Preserve response compatib
 ## Database and Migration Rules
 
 - Do not add foreign keys, cascading deletes, or cascading updates. Validate relationships and clean up dependents in application code, using a transaction when the operation must be atomic.
-- Every migration-created index, including indexes on new tables, uses `CREATE [UNIQUE] INDEX CONCURRENTLY`. Each concurrent index build gets its own single-statement migration file; the runner executes files outside an explicit transaction.
+- Consolidate unreleased development schema changes into the feature's original migration. Define new tables, their final columns, and indexes together; use ordinary `CREATE [UNIQUE] INDEX` for new tables. Index builds on existing deployed tables use `CONCURRENTLY`, each in its own single-statement migration file outside an explicit transaction.
 - Conditionally skipped migrations are still recorded in `schema_migrations`. Later DDL touching conditional objects must be idempotent (`IF EXISTS` / `IF NOT EXISTS`); document recovery if the missing object would break runtime behavior.
 
 ## Backend UUID Rules

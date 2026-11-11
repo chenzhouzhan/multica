@@ -53,7 +53,7 @@ Web 和 Desktop 都有的逻辑，**必须**抽到共享包。"小段重复"也�
 - 布尔：`is_<state>` 或者 `<state>_at`（状态变化优先用时间戳形式）
 - 迁移文件：`NNN_descriptive_name.up.sql` + `.down.sql`，**永远写双向**
 - 不创建数据库 foreign key，也不使用级联删除或级联更新；关系校验和清理由应用层完成
-- 所有索引都使用 `CREATE INDEX CONCURRENTLY` 或 `CREATE UNIQUE INDEX CONCURRENTLY`，每条 concurrent index 单独占一个 migration 文件
+- 未发布的开发阶段数据库改动合回功能的原始迁移，新表的最终字段和普通索引一起定义。为已部署的现有表创建索引时使用 `CREATE [UNIQUE] INDEX CONCURRENTLY`，每条 concurrent index 单独占一个 migration 文件
 
 ### Go
 
