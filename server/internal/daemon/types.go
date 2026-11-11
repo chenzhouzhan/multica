@@ -92,7 +92,8 @@ type Task struct {
 	// PluginHookTools are this workspace's agent-trigger plugin hooks, which
 	// the local MCP server presents to the agent as tools. Resolved by the
 	// server at claim time; the daemon never reads plugin state itself.
-	PluginHookTools []PluginHookTool `json:"plugin_hook_tools,omitempty"`
+	InfrastructureToolsEnabled bool             `json:"infrastructure_tools_enabled,omitempty"`
+	PluginHookTools            []PluginHookTool `json:"plugin_hook_tools,omitempty"`
 	// WorkspaceContext mirrors workspace.context (the per-workspace system
 	// prompt set in Settings → General). Server populates this on every claim
 	// regardless of task kind so the daemon can inject `## Workspace Context`

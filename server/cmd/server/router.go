@@ -1360,6 +1360,12 @@ func NewRouterWithOptions(pool *pgxpool.Pool, hub *realtime.Hub, bus *events.Bus
 		slog.Info("composio integration disabled (COMPOSIO_API_KEY not set)")
 	}
 
+	if key, err := secretbox.LoadKey("MULTICA_INFRASTRUCTURE_SECRET_KEY"); err == nil {
+		if box, err := secretbox.New(key); err == nil {
+			h.Infrastructure.Secrets = box
+		}
+	}
+
 	// VCS at-rest encryption: the box encrypts per-workspace access tokens and
 	// webhook secrets for token-based providers (Forgejo / Gitea / GitLab).
 	// Without it, connect/webhook handlers return 503 (so a misconfigured
@@ -1635,6 +1641,7 @@ func NewRouterWithOptions(pool *pgxpool.Pool, hub *realtime.Hub, bus *events.Bus
 		// this when an agent picks one of its tools; the server makes the
 		// signed request so the daemon never holds the signing secret.
 		r.Post("/tasks/{id}/plugin-hooks", h.InvokeAgentPluginHook)
+		r.Post("/tasks/{id}/infrastructure/tools/{tool}", h.InvokeAgentInfrastructureTool)
 		// The broker asks for an mcp hook's credential at connection time, so
 		// a secret never sits in a task record.
 		r.Get("/tasks/{id}/plugin-mcp/{contributionId}/credential", h.ResolvePluginMCPCredential)
@@ -1780,6 +1787,9 @@ func NewRouterWithOptions(pool *pgxpool.Pool, hub *realtime.Hub, bus *events.Bus
 					// for the same reason as GitHub installations; connect /
 					// disconnect are admin-gated in the group below.
 					r.Get("/vcs/connections", h.ListVCSConnections)
+					r.Get("/infrastructure/connections", h.ListInfrastructureConnections)
+					r.Get("/infrastructure/connections/{connectionId}/services/{serviceId}/metainfo", h.InfrastructureServiceMeta)
+					r.Post("/infrastructure/tools/{tool}", h.InvokeInfrastructureTool)
 					r.Get("/qoder", h.GetQoderConnection)
 					r.Get("/qoder/agents", h.ListQoderAgents)
 					// Custom runtime profiles — listing/reading is member-visible
@@ -1822,6 +1832,11 @@ func NewRouterWithOptions(pool *pgxpool.Pool, hub *realtime.Hub, bus *events.Bus
 					r.Delete("/share-links/{linkId}", h.RevokeShareLink)
 					r.Get("/share-links", h.ListShareLinks)
 					// Custom runtime profile mutations (admin-only).
+					r.With(handler.RequireHumanActor).Post("/infrastructure/connections", h.SaveInfrastructureConnection)
+					r.With(handler.RequireHumanActor).Put("/infrastructure/connections/{connectionId}", h.SaveInfrastructureConnection)
+					r.With(handler.RequireHumanActor).Delete("/infrastructure/connections/{connectionId}", h.DeleteInfrastructureConnection)
+					r.With(handler.RequireHumanActor).Put("/infrastructure/connections/{connectionId}/grants", h.SetInfrastructureGrants)
+					r.With(handler.RequireHumanActor).Put("/infrastructure/connections/{connectionId}/services/{serviceId}/metainfo", h.InfrastructureServiceMeta)
 					r.Post("/runtime-profiles", h.CreateRuntimeProfile)
 					r.Patch("/runtime-profiles/{profileId}", h.UpdateRuntimeProfile)
 					r.Put("/runtime-profiles/{profileId}", h.UpdateRuntimeProfile)

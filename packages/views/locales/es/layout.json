@@ -12,7 +12,8 @@
     "runtimes": "Runtimes",
     "skills": "Skills",
     "settings": "Ajustes",
-    "views": "Vistas"
+    "views": "Vistas",
+    "infrastructure": "Clústeres"
   },
   "tab": {
     "issue": "Tarea",
@@ -80,7 +81,8 @@
   },
   "spaces": {
     "work": "Trabajo",
-    "team": "Equipo"
+    "team": "Equipo",
+    "clusters": "Clústeres"
   },
   "rail": {
     "label": "Navegación de la app",
@@ -96,7 +98,8 @@
     "open_in_new_window_click": "Clic",
     "open_in_other_window": "Ya está abierto en otra ventana",
     "in_other_window": "Otra ventana",
-    "all_workspaces_open": "Todos los espacios de trabajo ya están abiertos en una ventana"
+    "all_workspaces_open": "Todos los espacios de trabajo ya están abiertos en una ventana",
+    "clusters": "Clústeres"
   },
   "panels": {
     "work": {

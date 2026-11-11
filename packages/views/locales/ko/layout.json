@@ -12,7 +12,8 @@
     "runtimes": "런타임",
     "skills": "스킬",
     "settings": "설정",
-    "views": "뷰"
+    "views": "뷰",
+    "infrastructure": "클러스터"
   },
   "tab": {
     "issue": "태스크",
@@ -80,7 +81,8 @@
   },
   "spaces": {
     "work": "작업",
-    "team": "팀"
+    "team": "팀",
+    "clusters": "클러스터"
   },
   "rail": {
     "label": "앱 탐색",
@@ -96,7 +98,8 @@
     "open_in_new_window_click": "클릭",
     "open_in_other_window": "다른 창에서 열려 있음",
     "in_other_window": "다른 창",
-    "all_workspaces_open": "모든 워크스페이스가 이미 창에 열려 있습니다"
+    "all_workspaces_open": "모든 워크스페이스가 이미 창에 열려 있습니다",
+    "clusters": "클러스터"
   },
   "panels": {
     "work": {

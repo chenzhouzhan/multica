@@ -837,7 +837,8 @@ func writeAttachments(b *strings.Builder) {
 // (compressed).
 func writeAlwaysUseCLI(b *strings.Builder) {
 	b.WriteString("## Important: Always Use the `multica` CLI\n\n")
-	b.WriteString("Access Multica platform resources only through the `multica` CLI — never `curl` / `wget`. If no command or documented platform mechanism covers what you need, report the gap in your result instead of working around it.\n\n")
+	b.WriteString("Access Multica platform resources through the `multica` CLI or explicitly provided Multica MCP tools — never `curl` / `wget`. If no command or documented platform mechanism covers what you need, report the gap in your result instead of working around it.\n\n")
+	b.WriteString("For Manager resources, run `multica infrastructure --help`. Service metainfo has `metainfo list`, `metainfo read`, and `metainfo save`; native MCP equivalents are `infra_list_metainfo_files`, `infra_read_metainfo_file`, and `infra_save_metainfo_file` when mounted. Always choose a Manager and service, use listed file keys, read before editing, and read again after saving. Saves require a workspace owner/admin human originator and affect every instance of that service type/version in the chosen Manager. Never automatically retry an uncertain save.\n\n")
 }
 
 // writeDeliveryInvariant emits the always-on delivery contract, shared by every

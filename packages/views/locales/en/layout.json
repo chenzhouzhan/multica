@@ -12,7 +12,8 @@
     "runtimes": "Runtimes",
     "skills": "Skills",
     "settings": "Settings",
-    "views": "Views"
+    "views": "Views",
+    "infrastructure": "Clusters"
   },
   "tab": {
     "issue": "Issue",
@@ -80,7 +81,8 @@
   },
   "spaces": {
     "work": "Work",
-    "team": "Team"
+    "team": "Team",
+    "clusters": "Clusters"
   },
   "rail": {
     "label": "App navigation",
@@ -96,7 +98,8 @@
     "open_in_new_window_click": "Click",
     "open_in_other_window": "Already open in another window",
     "in_other_window": "Other window",
-    "all_workspaces_open": "Every workspace is already open in a window"
+    "all_workspaces_open": "Every workspace is already open in a window",
+    "clusters": "Clusters"
   },
   "panels": {
     "work": {

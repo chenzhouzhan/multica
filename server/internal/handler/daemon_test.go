@@ -134,6 +134,14 @@ func TestRemoteMCPDaemonTokenForClaim(t *testing.T) {
 	}
 }
 
+func TestInfrastructureOnlyClaimReceivesDaemonToolCredential(t *testing.T) {
+	runtime := db.AgentRuntime{WorkspaceID: parseUUID(testWorkspaceID), DaemonID: strToText("daemon-infrastructure"), OwnerID: parseUUID(testUserID)}
+	token, params, err := remoteMCPDaemonTokenForClaim(AgentTaskResponse{InfrastructureToolsEnabled: true}, runtime)
+	if err != nil || !strings.HasPrefix(token, "mdt_") || len(params) != 1 || params[0].WorkspaceID != runtime.WorkspaceID || params[0].OwnerID != runtime.OwnerID {
+		t.Fatalf("infrastructure claim credential was not scoped: params=%+v err=%v", params, err)
+	}
+}
+
 func TestListDaemonWorkspaces_UserScopedAndConditional(t *testing.T) {
 	w := testutil.Call(t, testHandler.ListDaemonWorkspaces, newRequest(http.MethodGet, "/api/daemon/workspaces", nil)).Want(http.StatusOK)
 

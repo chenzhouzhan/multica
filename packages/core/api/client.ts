@@ -1,3 +1,4 @@
+import { InfrastructureMetaEntrySchema, InfrastructureMetaFileSchema, InfrastructureMetaSavedSchema, type InfrastructureMetaFile, type InfrastructureMetaEntry, InfrastructureConnectionSchema, InfrastructureConnectionsSchema, type InfrastructureConnections, type InfrastructureConnectionInput, type InfrastructureGrant, type InfrastructureInput, type InfrastructureTool } from "../infrastructure/schema";
 import type { ZodType } from "zod";
 import { AgentRuntimeSchema, EMPTY_RUNTIME } from "../runtimes/schema";
 import type { IssueWakeup, IssueWakeupInput, IssueWakeupSummaryRow, PausedWakeup, SystemWakeup, WakeupRun, WorkspaceSystemWakeup } from "../types/issue-wakeup";
@@ -5188,6 +5189,60 @@ export class ApiClient {
       EMPTY_ISSUE_PULL_REQUESTS_RESPONSE,
       { endpoint: "PUT /api/issues/:id/pr-auto-complete" },
     );
+  }
+
+  async listInfrastructureConnections(workspaceId: string) {
+    const endpoint = `/api/workspaces/${workspaceId}/infrastructure/connections`;
+    return parseWithFallback<InfrastructureConnections>(await this.fetch(endpoint), InfrastructureConnectionsSchema, { connections: [], configured: false, can_manage: false }, { endpoint });
+  }
+
+  async saveInfrastructureConnection(workspaceId: string, id: string | null, input: InfrastructureConnectionInput) {
+    const endpoint = `/api/workspaces/${workspaceId}/infrastructure/connections${id ? `/${id}` : ""}`;
+    const result = parseWithFallback(await this.fetch(endpoint, { method: id ? "PUT" : "POST", body: JSON.stringify(input) }), InfrastructureConnectionSchema.nullable(), null, { endpoint });
+    if (!result) throw new Error("Invalid Manager connection response");
+    return result;
+  }
+
+  async deleteInfrastructureConnection(workspaceId: string, id: string) {
+    await this.fetch(`/api/workspaces/${workspaceId}/infrastructure/connections/${id}`, { method: "DELETE" });
+  }
+
+  async setInfrastructureGrants(workspaceId: string, id: string, grants: InfrastructureGrant[]) {
+    const endpoint = `/api/workspaces/${workspaceId}/infrastructure/connections/${id}/grants`;
+    const result = parseWithFallback(await this.fetch(endpoint, { method: "PUT", body: JSON.stringify({ grants }) }), InfrastructureConnectionSchema.nullable(), null, { endpoint });
+    if (!result) throw new Error("Invalid Manager authorization response");
+    return result;
+  }
+
+  async serviceMetaFiles(workspaceId: string, connectionId: string, serviceId: number) {
+    const query = new URLSearchParams();
+    const endpoint = `/api/workspaces/${workspaceId}/infrastructure/connections/${connectionId}/services/${serviceId}/metainfo?${query}`;
+    const result = parseWithFallback<InfrastructureMetaEntry[] | null>(await this.fetch(endpoint), InfrastructureMetaEntrySchema.array().nullable(), null, { endpoint });
+    if (!result) throw new Error("Invalid service metainfo file list");
+    return result;
+  }
+
+  async serviceMetaFile(workspaceId: string, connectionId: string, serviceId: number, key: string) {
+    const query = new URLSearchParams({ key });
+    const endpoint = `/api/workspaces/${workspaceId}/infrastructure/connections/${connectionId}/services/${serviceId}/metainfo?${query}`;
+    const result = parseWithFallback<InfrastructureMetaFile | null>(await this.fetch(endpoint), InfrastructureMetaFileSchema.nullable(), null, { endpoint });
+    if (!result || result.key !== key) throw new Error("Invalid service metainfo file response");
+    return result;
+  }
+
+  async saveServiceMetaFile(workspaceId: string, connectionId: string, serviceId: number, key: string, content: string) {
+    const query = new URLSearchParams({ key });
+    const endpoint = `/api/workspaces/${workspaceId}/infrastructure/connections/${connectionId}/services/${serviceId}/metainfo?${query}`;
+    const result = parseWithFallback<{ saved: true } | null>(await this.fetch(endpoint, { method: "PUT", body: JSON.stringify({ content }) }), InfrastructureMetaSavedSchema.nullable(), null, { endpoint });
+    if (!result) throw new Error("Invalid service metainfo save response");
+    return result;
+  }
+
+  async infrastructureQuery<T>(workspaceId: string, tool: InfrastructureTool, input: InfrastructureInput, schema: ZodType<T>): Promise<T> {
+    const endpoint = `/api/workspaces/${workspaceId}/infrastructure/tools/${tool}`;
+    const result = parseWithFallback(await this.fetch(endpoint, { method: "POST", body: JSON.stringify(input) }), schema.nullable(), null, { endpoint });
+    if (result === null) throw new Error("Invalid Manager resource response");
+    return result;
   }
 
   // VCS integration (Forgejo / Gitea / GitLab)

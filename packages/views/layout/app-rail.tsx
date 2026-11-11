@@ -148,7 +148,7 @@ function RailSpaceLink({
           className="group relative flex h-[52px] w-[52px] flex-col items-center justify-center gap-1 rounded-xl text-muted-foreground transition-colors outline-none hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground focus-visible:outline-2 focus-visible:outline-ring aria-[current=page]:bg-sidebar-accent aria-[current=page]:font-medium aria-[current=page]:text-sidebar-accent-foreground"
         >
           <Icon className="size-5" />
-          <span className="max-w-full truncate px-1 text-micro leading-[14px]">{label}</span>
+          <span className={cn("max-w-full truncate text-micro leading-[14px]", space === "clusters" ? "px-0" : "px-1")}>{label}</span>
           {badge && <RailBadgeMark badge={badge} />}
         </AppLink>
       </TooltipHint>
@@ -157,7 +157,7 @@ function RailSpaceLink({
 }
 
 /**
- * The app rail: workspaces, New issue and search, the five spaces, then help,
+ * The app rail: workspaces, New issue and search, the workspace spaces, then help,
  * settings and the account. It sits on the app shell, outside the content
  * card, and stays put while the panel beside it collapses. Desktop passes
  * `globalActions={false}`: its title bar carries New issue and search.
@@ -196,6 +196,12 @@ export function AppRail({
       icon: Users,
       label: t(($) => $.rail.team),
       fullLabel: t(($) => $.spaces.team),
+    },
+    clusters: {
+      href: p.infrastructure(),
+      icon: routeIconForPath(p.infrastructure()),
+      label: t(($) => $.rail.clusters),
+      fullLabel: t(($) => $.spaces.clusters),
     },
     chat: {
       href: p.chat(),

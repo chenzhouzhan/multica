@@ -8111,6 +8111,21 @@ func (d *Daemon) runTask(ctx context.Context, task Task, provider string, slot i
 	// failing the task: an agent that cannot reach a plugin should still work
 	// on the issue, which is the same rule that makes a failing tool call a
 	// tool error rather than a task error.
+	if task.InfrastructureToolsEnabled {
+		config, server, err := startTaskInfrastructureMCP(ctx, func(callCtx context.Context, tool string, input json.RawMessage) (json.RawMessage, error) {
+			return d.client.InvokeInfrastructureTool(callCtx, task.RemoteMCPDaemonToken, task.ID, tool, input)
+		})
+		if err != nil {
+			taskLog.Warn("infrastructure tools unavailable", "error", err)
+		} else {
+			defer server.Close()
+			if merged, err := mergeTaskRemoteMCPConfig(remoteMCPConfig, config); err == nil {
+				remoteMCPConfig = merged
+			} else {
+				taskLog.Warn("could not merge infrastructure MCP config", "error", err)
+			}
+		}
+	}
 	pluginHookConfig, pluginHookServer, pluginHookErr := startTaskPluginHookMCP(
 		ctx, task.ID, task.PluginHookTools,
 		func(callCtx context.Context, taskID, installationID, hookKey string, input json.RawMessage) (json.RawMessage, error) {

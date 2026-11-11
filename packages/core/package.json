@@ -10,6 +10,7 @@
   },
   "exports": {
     "./appearance": "./appearance/store.ts",
+    "./infrastructure": "./infrastructure/index.ts",
     ".": "./index.ts",
     "./markdown": "./markdown/index.ts",
     "./types": "./types/index.ts",

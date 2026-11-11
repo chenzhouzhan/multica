@@ -106,6 +106,15 @@ beforeEach(() => {
   state.stuck = [];
 });
 
+describe("AppRail clusters", () => {
+  it("offers clusters as a top-level destination", () => {
+    state.pathname = "/acme/infrastructure";
+    renderRail();
+    expect(link("/acme/infrastructure")).toHaveAttribute("aria-current", "page");
+    expect(link("/acme/infrastructure")).toHaveTextContent("Clusters");
+  });
+});
+
 describe("AppRail global actions", () => {
   it("carries New issue and search by default", () => {
     renderRail();

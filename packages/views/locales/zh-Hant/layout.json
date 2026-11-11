@@ -12,7 +12,8 @@
     "runtimes": "執行時",
     "skills": "Skills",
     "settings": "設定",
-    "views": "檢視"
+    "views": "檢視",
+    "infrastructure": "叢集"
   },
   "tab": {
     "issue": "任務",
@@ -80,7 +81,8 @@
   },
   "spaces": {
     "work": "工作",
-    "team": "團隊"
+    "team": "團隊",
+    "clusters": "叢集"
   },
   "rail": {
     "label": "應用導覽",
@@ -96,7 +98,8 @@
     "open_in_new_window_click": "點擊",
     "open_in_other_window": "已在其他視窗開啟",
     "in_other_window": "其他視窗",
-    "all_workspaces_open": "所有工作區都已在視窗中開啟"
+    "all_workspaces_open": "所有工作區都已在視窗中開啟",
+    "clusters": "叢集"
   },
   "panels": {
     "work": {

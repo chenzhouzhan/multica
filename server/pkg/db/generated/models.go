@@ -824,6 +824,38 @@ type InboxItem struct {
 	Section       pgtype.Text        `json:"section"`
 }
 
+type InfrastructureConnection struct {
+	ID                 pgtype.UUID        `json:"id"`
+	WorkspaceID        pgtype.UUID        `json:"workspace_id"`
+	Name               string             `json:"name"`
+	BaseUrl            string             `json:"base_url"`
+	Username           string             `json:"username"`
+	PasswordCiphertext []byte             `json:"password_ciphertext"`
+	CaPem              string             `json:"ca_pem"`
+	RestartGrants      []byte             `json:"restart_grants"`
+	CreatedBy          pgtype.UUID        `json:"created_by"`
+	CreatedAt          pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt          pgtype.Timestamptz `json:"updated_at"`
+	SkipTlsVerify      bool               `json:"skip_tls_verify"`
+}
+
+type InfrastructureOperation struct {
+	ID            pgtype.UUID        `json:"id"`
+	WorkspaceID   pgtype.UUID        `json:"workspace_id"`
+	ConnectionID  pgtype.UUID        `json:"connection_id"`
+	ClusterID     int64              `json:"cluster_id"`
+	ServiceID     int64              `json:"service_id"`
+	RoleID        int64              `json:"role_id"`
+	ActorType     string             `json:"actor_type"`
+	ActorID       pgtype.UUID        `json:"actor_id"`
+	Reason        string             `json:"reason"`
+	UpstreamJobID pgtype.Int8        `json:"upstream_job_id"`
+	Status        string             `json:"status"`
+	Error         string             `json:"error"`
+	CreatedAt     pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt     pgtype.Timestamptz `json:"updated_at"`
+}
+
 type InstanceTelemetryState struct {
 	Singleton         bool               `json:"singleton"`
 	InstanceID        pgtype.UUID        `json:"instance_id"`

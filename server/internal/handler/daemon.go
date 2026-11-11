@@ -2667,7 +2667,7 @@ func (h *Handler) rejectClaimOnWorkspaceMismatch(ctx context.Context, task *db.A
 // returned only in the claim response; its hash is committed atomically with
 // the task-scoped agent token by FinalizeTaskClaim.
 func remoteMCPDaemonTokenForClaim(resp AgentTaskResponse, runtime db.AgentRuntime) (string, []db.CreateDaemonTokenParams, error) {
-	if len(resp.RemoteMCPConnections) == 0 {
+	if len(resp.RemoteMCPConnections) == 0 && !resp.InfrastructureToolsEnabled {
 		return "", nil, nil
 	}
 	if !runtime.DaemonID.Valid || strings.TrimSpace(runtime.DaemonID.String) == "" {
@@ -2862,6 +2862,11 @@ func (h *Handler) buildClaimedTaskResponse(r *http.Request, task *db.AgentTaskQu
 	// not — because its absence is what tells an upgraded daemon it is talking
 	// to a server too old to have answered the question (MUL-5811).
 	resp.LeaderRoleResolved = true
+	if h.Infrastructure != nil && h.Infrastructure.Secrets != nil && runtime.DaemonID.Valid && strings.TrimSpace(runtime.DaemonID.String) != "" {
+		if connections, err := h.Infrastructure.List(r.Context(), parseUUID(runtimeWorkspaceID)); err == nil {
+			resp.InfrastructureToolsEnabled = len(connections) > 0
+		}
+	}
 	// Agent-trigger plugin hooks, as tools. A failure here degrades to no
 	// tools rather than failing the claim: a plugin that cannot be listed must
 	// not stop an agent from working on the issue.

@@ -1,3 +1,4 @@
+import { InfrastructurePage } from "@multica/views/infrastructure";
 import { useEffect, useLayoutEffect } from "react";
 import { createMemoryRouter, Outlet, useLocation, useMatches } from "react-router-dom";
 import type { RouteObject } from "react-router-dom";
@@ -190,6 +191,11 @@ export const appRoutes: RouteObject[] = [
               </IssueViewUrlSync>
             ),
             handle: { title: "My Issues" },
+          },
+          {
+            path: "infrastructure",
+            element: <InfrastructurePage />,
+            handle: { title: "Server resources" },
           },
           {
             path: "runtimes",

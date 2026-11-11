@@ -619,7 +619,11 @@ WITH deleted_github_prs AS (
 DELETE FROM vcs_pull_request WHERE vcs_pull_request.workspace_id = $1;
 
 -- name: DeleteWorkspaceConnections :exec
-WITH deleted_github_installations AS (
+WITH deleted_infrastructure_operations AS (
+    DELETE FROM infrastructure_operation WHERE workspace_id = $1
+), deleted_infrastructure_connections AS (
+    DELETE FROM infrastructure_connection WHERE workspace_id = $1
+), deleted_github_installations AS (
     DELETE FROM github_installation
     WHERE github_installation.workspace_id = $1
 )

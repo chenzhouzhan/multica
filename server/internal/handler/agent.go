@@ -411,7 +411,8 @@ type AgentTaskResponse struct {
 	// daemon renders as MCP tools for this task. Resolved at claim time so
 	// disabling or uninstalling a plugin takes effect on the next task rather
 	// than whenever a daemon happens to restart.
-	PluginHookTools []service.PluginHookTool `json:"plugin_hook_tools,omitempty"`
+	InfrastructureToolsEnabled bool                     `json:"infrastructure_tools_enabled,omitempty"`
+	PluginHookTools            []service.PluginHookTool `json:"plugin_hook_tools,omitempty"`
 	// RemoteMCPDaemonToken is a short-lived, workspace-and-daemon scoped
 	// credential used only by the local daemon's write-only Remote MCP broker.
 	// It is never injected into the agent process.

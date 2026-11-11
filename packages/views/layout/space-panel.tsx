@@ -9,12 +9,14 @@ import { PanelResizeHandle } from "./panel-resize-handle";
 import { AutopilotsPanel } from "./panels/autopilots-panel";
 import { ChatPeek, InboxPeek } from "./panels/list-space-peeks";
 import { LIST_COLUMN_WIDTH_CLASS, NAV_COLUMN_MOTION_CLASS, NAV_PEEK_CLASS } from "./rail-styles";
+import { ClustersPanel } from "../infrastructure/clusters-panel";
 import { TeamPanel } from "./panels/team-panel";
 import { KeptRowsRelease, WorkPanel } from "./panels/work-panel";
 
 const PANELS: Partial<Record<AppSpaceId, () => React.ReactNode>> = {
   work: WorkPanel,
   team: TeamPanel,
+  clusters: ClustersPanel,
   autopilots: AutopilotsPanel,
 };
 

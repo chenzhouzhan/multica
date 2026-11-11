@@ -14,6 +14,7 @@ vi.mock("./panels/work-panel", () => ({
   WorkPanel: () => <div data-testid="work-panel" />,
   KeptRowsRelease: () => null,
 }));
+vi.mock("../infrastructure/clusters-panel", () => ({ ClustersPanel: () => <div data-testid="clusters-panel" /> }));
 vi.mock("./panels/team-panel", () => ({ TeamPanel: () => <div data-testid="team-panel" /> }));
 vi.mock("./panels/autopilots-panel", () => ({
   AutopilotsPanel: () => <div data-testid="autopilots-panel" />,
@@ -55,6 +56,13 @@ describe("SpacePanel", () => {
     renderPanel();
     expect(panel()).toHaveAttribute("data-state", "expanded");
     expect(screen.getByTestId("work-panel")).toBeInTheDocument();
+  });
+
+  it("uses the cluster list panel for the clusters space", () => {
+    navigation.pathname = "/acme/infrastructure";
+    renderPanel();
+    expect(screen.getByTestId("clusters-panel")).toBeInTheDocument();
+    expect(screen.queryByTestId("team-panel")).not.toBeInTheDocument();
   });
 
   // Inbox, Chat and Settings render their own list column in the card.
