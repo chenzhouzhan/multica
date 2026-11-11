@@ -13,7 +13,8 @@
     "skills": "Skills",
     "settings": "Settings",
     "views": "Views",
-    "infrastructure": "Clusters"
+    "infrastructure": "Clusters",
+    "weekly_reports": "Weekly reports"
   },
   "tab": {
     "issue": "Issue",

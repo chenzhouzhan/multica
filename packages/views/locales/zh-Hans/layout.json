@@ -13,7 +13,8 @@
     "skills": "Skills",
     "settings": "设置",
     "views": "视图",
-    "infrastructure": "集群"
+    "infrastructure": "集群",
+    "weekly_reports": "周报"
   },
   "tab": {
     "issue": "任务",

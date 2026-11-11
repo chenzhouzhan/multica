@@ -1841,6 +1841,44 @@ type WecomInstallSession struct {
 	UpdatedAt          pgtype.Timestamptz `json:"updated_at"`
 }
 
+type WeeklyReport struct {
+	ID            pgtype.UUID        `json:"id"`
+	WorkspaceID   pgtype.UUID        `json:"workspace_id"`
+	UserID        pgtype.UUID        `json:"user_id"`
+	WeekStart     pgtype.Date        `json:"week_start"`
+	AuthorName    string             `json:"author_name"`
+	Draft         []byte             `json:"draft"`
+	Published     []byte             `json:"published"`
+	Revision      int32              `json:"revision"`
+	PublishedAt   pgtype.Timestamptz `json:"published_at"`
+	UpdatedByType string             `json:"updated_by_type"`
+	UpdatedByID   pgtype.UUID        `json:"updated_by_id"`
+	CreatedAt     pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt     pgtype.Timestamptz `json:"updated_at"`
+}
+
+type WeeklyReportPeriod struct {
+	ID          pgtype.UUID        `json:"id"`
+	WorkspaceID pgtype.UUID        `json:"workspace_id"`
+	WeekStart   pgtype.Date        `json:"week_start"`
+	Roster      []byte             `json:"roster"`
+	CreatedAt   pgtype.Timestamptz `json:"created_at"`
+}
+
+type WeeklyTeamReport struct {
+	ID            pgtype.UUID        `json:"id"`
+	WorkspaceID   pgtype.UUID        `json:"workspace_id"`
+	WeekStart     pgtype.Date        `json:"week_start"`
+	Draft         []byte             `json:"draft"`
+	Snapshot      []byte             `json:"snapshot"`
+	Revision      int32              `json:"revision"`
+	GeneratedAt   pgtype.Timestamptz `json:"generated_at"`
+	UpdatedByType string             `json:"updated_by_type"`
+	UpdatedByID   pgtype.UUID        `json:"updated_by_id"`
+	CreatedAt     pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt     pgtype.Timestamptz `json:"updated_at"`
+}
+
 type Workspace struct {
 	ID           pgtype.UUID        `json:"id"`
 	Name         string             `json:"name"`

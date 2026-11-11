@@ -237,7 +237,13 @@ func (q *Queries) DeleteWorkspaceConnections(ctx context.Context, workspaceID pg
 }
 
 const deleteWorkspaceIssueRoots = `-- name: DeleteWorkspaceIssueRoots :exec
-WITH deleted_wakeup_receipts AS (
+WITH deleted_weekly_reports AS (
+ DELETE FROM weekly_report WHERE workspace_id = $1
+), deleted_weekly_team_reports AS (
+ DELETE FROM weekly_team_report WHERE workspace_id = $1
+), deleted_weekly_periods AS (
+ DELETE FROM weekly_report_period WHERE workspace_id = $1
+), deleted_wakeup_receipts AS (
  DELETE FROM issue_wakeup_receipt WHERE wakeup_id IN (SELECT id FROM issue_wakeup WHERE workspace_id=$1)
 ), deleted_wakeups AS (
  DELETE FROM issue_wakeup WHERE workspace_id=$1

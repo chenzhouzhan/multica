@@ -1,3 +1,10 @@
+import esWeeklyReports from "./es/weekly-reports.json";
+import frWeeklyReports from "./fr/weekly-reports.json";
+import jaWeeklyReports from "./ja/weekly-reports.json";
+import koWeeklyReports from "./ko/weekly-reports.json";
+import zhHantWeeklyReports from "./zh-Hant/weekly-reports.json";
+import zhHansWeeklyReports from "./zh-Hans/weekly-reports.json";
+import enWeeklyReports from "./en/weekly-reports.json";
 import type { LocaleResources, SupportedLocale } from "@multica/core/i18n";
 import enCommon from "./en/common.json";
 import enAuth from "./en/auth.json";
@@ -205,6 +212,7 @@ export const RESOURCES: Record<SupportedLocale, LocaleResources> = {
     ui: enUi,
     squads: enSquads,
     billing: enBilling,
+    "weekly-reports": enWeeklyReports,
   },
   "zh-Hans": {
     common: zhHansCommon,
@@ -232,6 +240,7 @@ export const RESOURCES: Record<SupportedLocale, LocaleResources> = {
     ui: zhHansUi,
     squads: zhHansSquads,
     billing: zhHansBilling,
+    "weekly-reports": zhHansWeeklyReports,
   },
   "zh-Hant": {
     common: zhHantCommon,
@@ -259,6 +268,7 @@ export const RESOURCES: Record<SupportedLocale, LocaleResources> = {
     ui: zhHantUi,
     squads: zhHantSquads,
     billing: zhHantBilling,
+    "weekly-reports": zhHantWeeklyReports,
   },
   ko: {
     common: koCommon,
@@ -286,6 +296,7 @@ export const RESOURCES: Record<SupportedLocale, LocaleResources> = {
     ui: koUi,
     squads: koSquads,
     billing: koBilling,
+    "weekly-reports": koWeeklyReports,
   },
   ja: {
     common: jaCommon,
@@ -313,6 +324,7 @@ export const RESOURCES: Record<SupportedLocale, LocaleResources> = {
     ui: jaUi,
     squads: jaSquads,
     billing: jaBilling,
+    "weekly-reports": jaWeeklyReports,
   },
   fr: {
     common: frCommon,
@@ -340,6 +352,7 @@ export const RESOURCES: Record<SupportedLocale, LocaleResources> = {
     ui: frUi,
     squads: frSquads,
     billing: frBilling,
+    "weekly-reports": frWeeklyReports,
   },
   es: {
     common: esCommon,
@@ -367,5 +380,6 @@ export const RESOURCES: Record<SupportedLocale, LocaleResources> = {
     ui: esUi,
     squads: esSquads,
     billing: esBilling,
+    "weekly-reports": esWeeklyReports,
   },
 };

@@ -1,4 +1,5 @@
 import "i18next";
+import type weeklyReports from "../locales/en/weekly-reports.json";
 // Pulls in the `ui` namespace augmentation owned by packages/ui — see
 // packages/ui/types/i18next.ts. Side-effect import is required for views'
 // typecheck program to see ui's contribution to `I18nResources`.
@@ -68,6 +69,7 @@ declare global {
     usage: typeof usage;
     squads: typeof squads;
     billing: typeof billing;
+    "weekly-reports": typeof weeklyReports;
   }
 }
 

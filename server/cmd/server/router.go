@@ -2319,6 +2319,20 @@ func NewRouterWithOptions(pool *pgxpool.Pool, hub *realtime.Hub, bus *events.Bus
 				r.Delete("/{itemType}/{itemId}", h.DeletePin)
 			})
 
+			r.Route("/api/weekly-reports", func(r chi.Router) {
+				r.Get("/", h.ListWeeklyReports)
+				r.Get("/history", h.WeeklyReportHistory)
+				r.Get("/{week}/mine", h.GetWeeklyReport)
+				r.Put("/{week}/mine", h.SaveWeeklyReport)
+				r.Post("/{week}/mine/submit", h.SubmitWeeklyReport)
+				r.Get("/{week}/members/{userId}", h.GetWeeklyReport)
+			})
+			r.Route("/api/weekly-team-reports", func(r chi.Router) {
+				r.Get("/{week}", h.GetWeeklyTeamReport)
+				r.Put("/{week}", h.SaveWeeklyTeamReport)
+				r.Post("/{week}/generate", h.GenerateWeeklyTeamReport)
+			})
+
 			// Saved issue views (MUL-4796).
 			r.Get("/api/issue-view-preferences", h.GetIssueViewPreference)
 			r.Put("/api/issue-view-preferences", h.PutIssueViewPreference)

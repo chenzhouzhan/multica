@@ -79,6 +79,7 @@ function workspaceScoped(slug: string) {
     myIssues: () => `${ws}/my-issues`,
     myAgents: () => `${ws}/my-issues?scope=${MY_AGENTS_SCOPE}`,
     views: () => `${ws}/views`,
+    weeklyReports: () => `${ws}/weekly-reports`,
     infrastructure: () => `${ws}/infrastructure`,
     runtimes: () => `${ws}/runtimes`,
     runtimeDetail: (id: string) => `${ws}/runtimes/${encode(id)}`,

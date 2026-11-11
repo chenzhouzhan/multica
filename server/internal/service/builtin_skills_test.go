@@ -352,6 +352,7 @@ func TestPlatformSkillDescriptionNamesEveryDomain(t *testing.T) {
 	// These are task nouns, not section headings: a task arrives as "set up an
 	// autopilot", never as "Core model".
 	triggerWords := map[string]string{
+		"references/weekly-reports.md": "weekly report",
 		"references/infrastructure.md": "infrastructure",
 		"references/issues.md":         "issue",
 		"references/sub-issues.md":     "sub-issue",

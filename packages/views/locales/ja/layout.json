@@ -13,7 +13,8 @@
     "skills": "スキル",
     "settings": "設定",
     "views": "ビュー",
-    "infrastructure": "クラスター"
+    "infrastructure": "クラスター",
+    "weekly_reports": "週報"
   },
   "tab": {
     "issue": "タスク",

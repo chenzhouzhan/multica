@@ -1,3 +1,4 @@
+import { WeeklyWeekSchema, WeeklyReportSchema, WeeklyTeamSchema, encodeWeeklyOverview, type WeeklyContent, type WeeklyOverview, type WeeklyReport, type WeeklyTeam, type WeeklyWeek } from "../weekly-reports/schema";
 import { InfrastructureMetaEntrySchema, InfrastructureMetaFileSchema, InfrastructureMetaSavedSchema, type InfrastructureMetaFile, type InfrastructureMetaEntry, InfrastructureConnectionSchema, InfrastructureConnectionsSchema, type InfrastructureConnections, type InfrastructureConnectionInput, type InfrastructureGrant, type InfrastructureInput, type InfrastructureTool } from "../infrastructure/schema";
 import type { ZodType } from "zod";
 import { AgentRuntimeSchema, EMPTY_RUNTIME } from "../runtimes/schema";
@@ -5189,6 +5190,64 @@ export class ApiClient {
       EMPTY_ISSUE_PULL_REQUESTS_RESPONSE,
       { endpoint: "PUT /api/issues/:id/pr-auto-complete" },
     );
+  }
+
+  async weeklyWeek(wsId: string, week: string) {
+    const endpoint = `/api/weekly-reports?week=${encodeURIComponent(week)}`;
+    const result = parseWithFallback<WeeklyWeek | null>(await this.fetch<unknown>(endpoint, { headers: { "X-Workspace-ID": wsId } }), WeeklyWeekSchema.nullable(), null, { endpoint });
+    if (!result) throw new Error("Invalid weekly report response");
+    return result;
+  }
+
+  async weeklyMine(wsId: string, week: string) {
+    const endpoint = `/api/weekly-reports/${encodeURIComponent(week)}/mine`;
+    const result = parseWithFallback<WeeklyReport | null>(await this.fetch<unknown>(endpoint, { headers: { "X-Workspace-ID": wsId } }), WeeklyReportSchema.nullable(), null, { endpoint });
+    if (!result) throw new Error("Invalid weekly report response");
+    return result;
+  }
+
+  async weeklyHistory(wsId: string, userId: string) {
+    const endpoint = `/api/weekly-reports/history?user_id=${encodeURIComponent(userId)}`;
+    return parseWithFallback<WeeklyReport[]>(await this.fetch<unknown>(endpoint, { headers: { "X-Workspace-ID": wsId } }), WeeklyReportSchema.array(), [], { endpoint });
+  }
+
+  async saveWeeklyReport(wsId: string, week: string, content: WeeklyContent, revision: number) {
+    const endpoint = `/api/weekly-reports/${encodeURIComponent(week)}/mine`;
+    const raw = await this.fetch<unknown>(endpoint, { method: "PUT", headers: { "X-Workspace-ID": wsId }, body: JSON.stringify({ content, expected_revision: revision }) });
+    const result = parseWithFallback<WeeklyReport | null>(raw, WeeklyReportSchema.nullable(), null, { endpoint });
+    if (!result || result.revision <= revision) throw new Error("Invalid weekly report save response");
+    return result;
+  }
+
+  async submitWeeklyReport(wsId: string, week: string, revision: number) {
+    const endpoint = `/api/weekly-reports/${encodeURIComponent(week)}/mine/submit`;
+    const raw = await this.fetch<unknown>(endpoint, { method: "POST", headers: { "X-Workspace-ID": wsId }, body: JSON.stringify({ expected_revision: revision }) });
+    const result = parseWithFallback<WeeklyReport | null>(raw, WeeklyReportSchema.nullable(), null, { endpoint });
+    if (!result || result.revision <= revision || !result.published) throw new Error("Invalid weekly report submit response");
+    return result;
+  }
+
+  async weeklyTeam(wsId: string, week: string) {
+    const endpoint = `/api/weekly-team-reports/${encodeURIComponent(week)}`;
+    const result = parseWithFallback<WeeklyTeam | null>(await this.fetch<unknown>(endpoint, { headers: { "X-Workspace-ID": wsId } }), WeeklyTeamSchema.nullable(), null, { endpoint });
+    if (!result) throw new Error("Invalid team report response");
+    return result;
+  }
+
+  async saveWeeklyTeamReport(wsId: string, week: string, overview: WeeklyOverview, revision: number) {
+    const endpoint = `/api/weekly-team-reports/${encodeURIComponent(week)}`;
+    const raw = await this.fetch<unknown>(endpoint, { method: "PUT", headers: { "X-Workspace-ID": wsId }, body: JSON.stringify({ overview: encodeWeeklyOverview(overview), expected_revision: revision }) });
+    const result = parseWithFallback<WeeklyTeam | null>(raw, WeeklyTeamSchema.nullable(), null, { endpoint });
+    if (!result || result.revision <= revision || !result.draft) throw new Error("Invalid team report save response");
+    return result;
+  }
+
+  async generateWeeklyTeamReport(wsId: string, week: string, revision: number) {
+    const endpoint = `/api/weekly-team-reports/${encodeURIComponent(week)}/generate`;
+    const raw = await this.fetch<unknown>(endpoint, { method: "POST", headers: { "X-Workspace-ID": wsId }, body: JSON.stringify({ expected_revision: revision }) });
+    const result = parseWithFallback<WeeklyTeam | null>(raw, WeeklyTeamSchema.nullable(), null, { endpoint });
+    if (!result || result.revision <= revision || !result.snapshot) throw new Error("Invalid team report generation response");
+    return result;
   }
 
   async listInfrastructureConnections(workspaceId: string) {
