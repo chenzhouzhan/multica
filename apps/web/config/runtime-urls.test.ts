@@ -2,6 +2,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  resolveAllowedDevOrigins,
   resolveBrowserApiBaseUrl,
   resolveBrowserWsUrl,
   resolveDevDocsUrl,
@@ -10,6 +11,30 @@ import {
   resolveRemoteApiUrl,
   runtimeRewriteDestination,
 } from "./runtime-urls";
+
+describe("resolveAllowedDevOrigins", () => {
+  it("extracts hostnames without ports from configured CORS origins", () => {
+    expect(
+      resolveAllowedDevOrigins({
+        CORS_ALLOWED_ORIGINS:
+          "http://172.18.136.23:3000, http://localhost:3000, https://app.example.com:8443",
+      }),
+    ).toEqual(["172.18.136.23", "localhost", "app.example.com"]);
+  });
+
+  it("preserves hostname patterns and ignores empty entries", () => {
+    expect(
+      resolveAllowedDevOrigins({
+        CORS_ALLOWED_ORIGINS: " *.example.com, , dev.local, ",
+      }),
+    ).toEqual(["*.example.com", "dev.local"]);
+  });
+
+  it("leaves the allowlist unset when no origins are configured", () => {
+    expect(resolveAllowedDevOrigins({})).toBeUndefined();
+    expect(resolveAllowedDevOrigins({ CORS_ALLOWED_ORIGINS: "" })).toBeUndefined();
+  });
+});
 
 describe("resolveRemoteApiUrl", () => {
   it("prefers REMOTE_API_URL when explicitly configured", () => {

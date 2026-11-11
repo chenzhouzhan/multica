@@ -1,5 +1,20 @@
 type RuntimeEnv = Record<string, string | undefined>;
 
+export function resolveAllowedDevOrigins(env: RuntimeEnv): string[] | undefined {
+  if (!env.CORS_ALLOWED_ORIGINS) return undefined;
+
+  return env.CORS_ALLOWED_ORIGINS.split(",")
+    .map((origin) => {
+      try {
+        // Next.js matches Origin hostnames without their ports.
+        return new URL(origin.trim()).hostname;
+      } catch {
+        return origin.trim();
+      }
+    })
+    .filter(Boolean);
+}
+
 function cleanUrl(raw: string | undefined): string | undefined {
   const value = raw?.trim();
   if (!value) return undefined;
