@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/multica-ai/multica/server/internal/infrastructureexec"
 	"github.com/multica-ai/multica/server/internal/integrations/transwarp"
 	"github.com/multica-ai/multica/server/internal/util/secretbox"
 	db "github.com/multica-ai/multica/server/pkg/db/generated"
@@ -41,37 +42,41 @@ type InfrastructureConnectionInput struct {
 }
 
 type InfrastructureInput struct {
-	ConnectionID string  `json:"connection_id"`
-	ClusterID    int64   `json:"cluster_id"`
-	ServiceID    int64   `json:"service_id"`
-	NodeID       int64   `json:"node_id"`
-	RoleID       int64   `json:"role_id"`
-	Hostname     string  `json:"hostname"`
-	Level        string  `json:"level"`
-	Keywords     string  `json:"keywords"`
-	MetricNames  string  `json:"metric_names"`
-	Start        int64   `json:"start"`
-	End          int64   `json:"end"`
-	Reason       string  `json:"reason"`
-	OperationID  string  `json:"operation_id"`
-	Key          string  `json:"key"`
-	Content      *string `json:"content"`
-	TaskID       string  `json:"-"`
+	ConnectionID string           `json:"connection_id"`
+	ClusterID    int64            `json:"cluster_id"`
+	ServiceID    int64            `json:"service_id"`
+	NodeID       int64            `json:"node_id"`
+	RoleID       int64            `json:"role_id"`
+	Hostname     string           `json:"hostname"`
+	Level        string           `json:"level"`
+	Keywords     string           `json:"keywords"`
+	MetricNames  string           `json:"metric_names"`
+	Start        int64            `json:"start"`
+	End          int64            `json:"end"`
+	Reason       string           `json:"reason"`
+	OperationID  string           `json:"operation_id"`
+	Action       string           `json:"action"`
+	Items        []ImageSelection `json:"items"`
+	Key          string           `json:"key"`
+	Content      *string          `json:"content"`
+	TaskID       string           `json:"-"`
 }
 
 type InfrastructureOperation struct {
-	ID           string `json:"id"`
-	ConnectionID string `json:"connection_id"`
-	ClusterID    int64  `json:"cluster_id"`
-	ServiceID    int64  `json:"service_id"`
-	RoleID       int64  `json:"role_id"`
-	ActorType    string `json:"actor_type"`
-	ActorID      string `json:"actor_id"`
-	Reason       string `json:"reason"`
-	JobID        *int64 `json:"job_id"`
-	Status       string `json:"status"`
-	Error        string `json:"error"`
-	CreatedAt    string `json:"created_at"`
+	ID           string          `json:"id"`
+	ConnectionID string          `json:"connection_id"`
+	ClusterID    int64           `json:"cluster_id"`
+	ServiceID    int64           `json:"service_id"`
+	RoleID       int64           `json:"role_id"`
+	ActorType    string          `json:"actor_type"`
+	ActorID      string          `json:"actor_id"`
+	Reason       string          `json:"reason"`
+	JobID        *int64          `json:"job_id"`
+	Status       string          `json:"status"`
+	Error        string          `json:"error"`
+	CreatedAt    string          `json:"created_at"`
+	Kind         string          `json:"kind"`
+	Details      json.RawMessage `json:"details"`
 }
 
 type infrastructureClientEntry struct {
@@ -80,10 +85,11 @@ type infrastructureClientEntry struct {
 }
 
 type InfrastructureService struct {
-	Queries   *db.Queries
-	TxStarter TxStarter
-	Secrets   *secretbox.Box
-	clients   sync.Map
+	Queries       *db.Queries
+	TxStarter     TxStarter
+	Secrets       *secretbox.Box
+	ExecutionDial infrastructureexec.Dialer
+	clients       sync.Map
 }
 
 func infrastructureConnection(row db.InfrastructureConnection) InfrastructureConnection {
@@ -98,7 +104,7 @@ func infrastructureOperation(row db.InfrastructureOperation) InfrastructureOpera
 		value := row.UpstreamJobID.Int64
 		jobID = &value
 	}
-	return InfrastructureOperation{uuidString(row.ID), uuidString(row.ConnectionID), row.ClusterID, row.ServiceID, row.RoleID, row.ActorType, uuidString(row.ActorID), row.Reason, jobID, row.Status, row.Error, row.CreatedAt.Time.UTC().Format(time.RFC3339)}
+	return InfrastructureOperation{ID: uuidString(row.ID), ConnectionID: uuidString(row.ConnectionID), ClusterID: row.ClusterID, ServiceID: row.ServiceID, RoleID: row.RoleID, ActorType: row.ActorType, ActorID: uuidString(row.ActorID), Reason: row.Reason, JobID: jobID, Status: row.Status, Error: row.Error, CreatedAt: row.CreatedAt.Time.UTC().Format(time.RFC3339), Kind: row.Kind, Details: json.RawMessage(row.Details)}
 }
 
 func (s *InfrastructureService) List(ctx context.Context, workspaceID pgtype.UUID) ([]InfrastructureConnection, error) {
@@ -375,6 +381,9 @@ func (s *InfrastructureService) RefreshOperation(ctx context.Context, workspaceI
 	operation, err := s.Queries.GetInfrastructureOperation(ctx, db.GetInfrastructureOperationParams{ID: id, WorkspaceID: workspaceID, ConnectionID: connectionID})
 	if err != nil {
 		return InfrastructureOperation{}, err
+	}
+	if operation.Kind == "publish_images" || operation.Kind == "restart_pods" {
+		return s.refreshImageOperation(ctx, operation)
 	}
 	if !operation.UpstreamJobID.Valid || operation.Status == "succeeded" || operation.Status == "failed" {
 		return infrastructureOperation(operation), nil

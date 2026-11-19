@@ -825,18 +825,19 @@ type InboxItem struct {
 }
 
 type InfrastructureConnection struct {
-	ID                 pgtype.UUID        `json:"id"`
-	WorkspaceID        pgtype.UUID        `json:"workspace_id"`
-	Name               string             `json:"name"`
-	BaseUrl            string             `json:"base_url"`
-	Username           string             `json:"username"`
-	PasswordCiphertext []byte             `json:"password_ciphertext"`
-	CaPem              string             `json:"ca_pem"`
-	RestartGrants      []byte             `json:"restart_grants"`
-	CreatedBy          pgtype.UUID        `json:"created_by"`
-	CreatedAt          pgtype.Timestamptz `json:"created_at"`
-	UpdatedAt          pgtype.Timestamptz `json:"updated_at"`
-	SkipTlsVerify      bool               `json:"skip_tls_verify"`
+	ID                        pgtype.UUID        `json:"id"`
+	WorkspaceID               pgtype.UUID        `json:"workspace_id"`
+	Name                      string             `json:"name"`
+	BaseUrl                   string             `json:"base_url"`
+	Username                  string             `json:"username"`
+	PasswordCiphertext        []byte             `json:"password_ciphertext"`
+	CaPem                     string             `json:"ca_pem"`
+	RestartGrants             []byte             `json:"restart_grants"`
+	CreatedBy                 pgtype.UUID        `json:"created_by"`
+	CreatedAt                 pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt                 pgtype.Timestamptz `json:"updated_at"`
+	SkipTlsVerify             bool               `json:"skip_tls_verify"`
+	ExecutionAccessCiphertext []byte             `json:"execution_access_ciphertext"`
 }
 
 type InfrastructureOperation struct {
@@ -854,6 +855,8 @@ type InfrastructureOperation struct {
 	Error         string             `json:"error"`
 	CreatedAt     pgtype.Timestamptz `json:"created_at"`
 	UpdatedAt     pgtype.Timestamptz `json:"updated_at"`
+	Kind          string             `json:"kind"`
+	Details       []byte             `json:"details"`
 }
 
 type InstanceTelemetryState struct {

@@ -1,5 +1,7 @@
 import { WeeklyWeekSchema, WeeklyReportSchema, WeeklyTeamSchema, encodeWeeklyOverview, type WeeklyContent, type WeeklyOverview, type WeeklyReport, type WeeklyTeam, type WeeklyWeek } from "../weekly-reports/schema";
 import { InfrastructureMetaEntrySchema, InfrastructureMetaFileSchema, InfrastructureMetaSavedSchema, type InfrastructureMetaFile, type InfrastructureMetaEntry, InfrastructureConnectionSchema, InfrastructureConnectionsSchema, type InfrastructureConnections, type InfrastructureConnectionInput, type InfrastructureGrant, type InfrastructureInput, type InfrastructureTool } from "../infrastructure/schema";
+import { InfrastructureOperationSchema, type InfrastructureOperation } from "../infrastructure/schema";
+import { InfrastructureImageResourcesSchema, InfrastructureExecutionAccessSchema, type InfrastructureImageResources, type InfrastructureExecutionAccess, type InfrastructureImageScope, type InfrastructureImagePreviewInput, type InfrastructureExecutionAccessInput } from "../infrastructure/images-schema";
 import type { ZodType } from "zod";
 import { AgentRuntimeSchema, EMPTY_RUNTIME } from "../runtimes/schema";
 import type { IssueWakeup, IssueWakeupInput, IssueWakeupSummaryRow, PausedWakeup, SystemWakeup, WakeupRun, WorkspaceSystemWakeup } from "../types/issue-wakeup";
@@ -5301,6 +5303,41 @@ export class ApiClient {
     const endpoint = `/api/workspaces/${workspaceId}/infrastructure/tools/${tool}`;
     const result = parseWithFallback(await this.fetch(endpoint, { method: "POST", body: JSON.stringify(input) }), schema.nullable(), null, { endpoint });
     if (result === null) throw new Error("Invalid Manager resource response");
+    return result;
+  }
+
+  async infrastructureImageResources(scope: InfrastructureImageScope) {
+    const endpoint = `/api/workspaces/${scope.ws}/infrastructure/connections/${scope.connection}/clusters/${scope.cluster}/services/${scope.service}/images`;
+    const result = parseWithFallback<InfrastructureImageResources | null>(await this.fetch(endpoint), InfrastructureImageResourcesSchema.nullable(), null, { endpoint });
+    if (!result) throw new Error("Invalid service image resource response");
+    return result;
+  }
+
+  async infrastructureExecutionAccess(ws: string, connection: string, cluster: number) {
+    const endpoint = `/api/workspaces/${ws}/infrastructure/connections/${connection}/clusters/${cluster}/execution-access`;
+    const result = parseWithFallback<InfrastructureExecutionAccess | null>(await this.fetch(endpoint), InfrastructureExecutionAccessSchema.nullable(), null, { endpoint });
+    if (!result) throw new Error("Invalid cluster execution access response");
+    return result;
+  }
+
+  async saveInfrastructureExecutionAccess(ws: string, connection: string, cluster: number, input: InfrastructureExecutionAccessInput) {
+    const endpoint = `/api/workspaces/${ws}/infrastructure/connections/${connection}/clusters/${cluster}/execution-access`;
+    const result = parseWithFallback<InfrastructureExecutionAccess | null>(await this.fetch(endpoint, { method: "PUT", body: JSON.stringify(input) }), InfrastructureExecutionAccessSchema.nullable(), null, { endpoint });
+    if (!result || (!result.configured && !result.requires_context_selection && !result.requires_host_key_confirmation) || result.host !== input.host.trim() || result.port !== (input.port || 22) || result.username !== input.username.trim()) throw new Error("Invalid cluster execution access save response");
+    return result;
+  }
+
+  async previewInfrastructureImages(scope: InfrastructureImageScope, input: InfrastructureImagePreviewInput) {
+    const endpoint = `/api/workspaces/${scope.ws}/infrastructure/connections/${scope.connection}/clusters/${scope.cluster}/services/${scope.service}/images/preview`;
+    const result = parseWithFallback<InfrastructureOperation | null>(await this.fetch(endpoint, { method: "POST", body: JSON.stringify(input) }), InfrastructureOperationSchema.nullable(), null, { endpoint });
+    if (!result || result.connection_id !== scope.connection || result.cluster_id !== scope.cluster || result.service_id !== scope.service || result.kind !== input.action) throw new Error("Invalid image publication preview response");
+    return result;
+  }
+
+  async startInfrastructureImages(scope: InfrastructureImageScope, operation: string) {
+    const endpoint = `/api/workspaces/${scope.ws}/infrastructure/connections/${scope.connection}/clusters/${scope.cluster}/services/${scope.service}/images/operations/${operation}/start`;
+    const result = parseWithFallback<InfrastructureOperation | null>(await this.fetch(endpoint, { method: "POST", body: "{}" }), InfrastructureOperationSchema.nullable(), null, { endpoint });
+    if (!result || result.id !== operation || result.connection_id !== scope.connection || result.cluster_id !== scope.cluster || result.service_id !== scope.service) throw new Error("Invalid image publication submission response; inspect the operation before retrying");
     return result;
   }
 

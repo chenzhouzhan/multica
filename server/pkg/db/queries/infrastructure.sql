@@ -35,3 +35,22 @@ SELECT * FROM infrastructure_operation WHERE workspace_id = $1 AND connection_id
 
 -- name: GetInfrastructureOperation :one
 SELECT * FROM infrastructure_operation WHERE id = $1 AND workspace_id = $2 AND connection_id = $3;
+
+-- name: SaveInfrastructureExecutionAccess :execrows
+UPDATE infrastructure_connection SET execution_access_ciphertext = $3, updated_at = now()
+WHERE id = $1 AND workspace_id = $2 AND updated_at = $4;
+
+-- name: CreateInfrastructureImageOperation :one
+INSERT INTO infrastructure_operation (workspace_id, connection_id, cluster_id, service_id, role_id, actor_type, actor_id, reason, kind, status, details)
+VALUES ($1, $2, $3, $4, 0, $5, $6, $7, $8, 'preparing', $9) RETURNING *;
+
+-- name: UpdateInfrastructureImageOperation :one
+UPDATE infrastructure_operation SET status = $3, error = $4, details = $5, updated_at = now()
+WHERE id = $1 AND workspace_id = $2 RETURNING *;
+
+-- name: ClaimInfrastructureImageOperation :one
+UPDATE infrastructure_operation SET status = 'running', updated_at = now()
+WHERE id = $1 AND workspace_id = $2 AND connection_id = $3 AND actor_id = $4
+AND actor_type = $5 AND COALESCE(details->>'task_id', '') = sqlc.arg(task_id)::text
+AND kind IN ('publish_images', 'restart_pods') AND status = 'ready'
+AND updated_at > now() - INTERVAL '10 minutes' RETURNING *;

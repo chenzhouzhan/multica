@@ -26,8 +26,11 @@ func Tools() []Tool {
 		{"search_logs", "Read logs for a service and host. Defaults to the last 15 minutes; at most 24 hours.", []string{"connection_id", "service_id", "hostname", "level"}},
 		{"node_metrics", "Read named node metrics. Discover valid metric names from Manager; do not invent names.", []string{"connection_id", "node_id", "metric_names"}},
 		{"restart_role", "Restart exactly one role with prior administrator authorization. Requires connection, cluster, service, role and reason. Submission is not success. Poll get_operation; never retry an uncertain submission automatically.", []string{"connection_id", "cluster_id", "service_id", "role_id", "reason"}},
-		{"list_operations", "List recent audited restart operations for one Manager.", []string{"connection_id"}},
-		{"get_operation", "Poll a local restart operation and verify the resulting role health. Use the local operation id, not the Manager job id.", []string{"connection_id", "operation_id"}},
+		{"list_service_images", "Read actual workload/role images for exactly one service. Use the returned target keys when selecting roles; do not invent keys. Execution access must already be configured by an administrator.", []string{"connection_id", "cluster_id", "service_id"}},
+		{"preview_service_images", "Prepare image publication or Pod restart for selected targets without changing deployments. Each role may use a different full Harbor image address. Requires a workspace owner/admin human originator and reason. Poll get_operation until ready and inspect each pinned image before starting. Preview may pull images on the execution node.", []string{"connection_id", "cluster_id", "service_id", "action", "items", "reason"}},
+		{"start_service_images", "Execute this task's ready image/Pod restart preview once, when the user has requested that change. Requires the human originator to still be a workspace owner/admin. Poll get_operation through rollout and Pod digest verification; submission is not success. Never retry an uncertain submission automatically.", []string{"connection_id", "cluster_id", "service_id", "operation_id"}},
+		{"list_operations", "List recent audited role restarts, image publications and Pod restarts for one Manager.", []string{"connection_id"}},
+		{"get_operation", "Poll a local role restart, image preview/publication or Pod restart. Preparing/running are pending; ready is an unsubmitted image preview. Succeeded is verified completion; unknown requires inspection and verification_required needs further read-only checks. Use the local operation id, not the Manager job id.", []string{"connection_id", "operation_id"}},
 	}
 	tools := make([]Tool, 0, len(definitions))
 	for _, d := range definitions {
@@ -48,6 +51,16 @@ func Tools() []Tool {
 				properties[field] = map[string]any{"type": typ}
 			}
 			properties["level"] = map[string]any{"type": "string", "enum": []string{"FATAL", "ERROR", "WARN", "INFO", "DEBUG", "TRACE"}}
+		}
+		if d.name == "preview_service_images" {
+			properties["action"] = map[string]any{"type": "string", "enum": []string{"publish_images", "restart_pods"}}
+			properties["reason"] = map[string]any{"type": "string", "minLength": 1, "maxLength": 2000}
+			properties["items"] = map[string]any{"type": "array", "minItems": 1, "maxItems": 16, "items": map[string]any{
+				"type": "object", "properties": map[string]any{
+					"key":    map[string]any{"type": "string", "minLength": 1, "maxLength": 1024, "description": "Exact target key returned by list_service_images."},
+					"source": map[string]any{"type": "string", "maxLength": 1024, "description": "Required for publish_images: complete source registry image, with its actual tag or digest. Omit for restart_pods."},
+				}, "required": []string{"key"}, "additionalProperties": false,
+			}}
 		}
 		required := d.fields
 		if required == nil {

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { InfrastructureImagePlanSchema } from "./images-schema";
 
 const text = z.string().catch("");
 const number = z.number().finite().catch(0);
@@ -101,10 +102,19 @@ export const InfrastructureOperationSchema = z.object({
       "failed",
       "verification_required",
       "unknown",
+      "preparing",
+      "ready",
+      "expired",
+      "conflict",
     ])
     .catch("unknown"),
   error: text,
   created_at: text,
+  kind: z
+    .enum(["restart_role", "publish_images", "restart_pods", "unknown"])
+    .default("restart_role")
+    .catch("unknown"),
+  details: InfrastructureImagePlanSchema.nullable().catch(null),
 });
 export type InfrastructureConnections = z.infer<
   typeof InfrastructureConnectionsSchema

@@ -166,3 +166,83 @@ func TestInfrastructureMCPMetainfoCatalogAndReadWrite(t *testing.T) {
 		t.Fatal("MCP save count changed")
 	}
 }
+
+func TestInfrastructureMCPRoutesServiceImagesWithIndependentRoleSources(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	var calls []string
+	config, server, err := startTaskInfrastructureMCP(ctx, func(_ context.Context, tool string, input json.RawMessage) (json.RawMessage, error) {
+		var args struct {
+			Connection string                         `json:"connection_id"`
+			Cluster    int64                          `json:"cluster_id"`
+			Service    int64                          `json:"service_id"`
+			Items      []struct{ Key, Source string } `json:"items"`
+		}
+		if err := json.Unmarshal(input, &args); err != nil {
+			return nil, err
+		}
+		if args.Connection != "manager-a" || args.Cluster != 7 || args.Service != 8 {
+			t.Error("image call lost Manager/cluster/service scope")
+		}
+		calls = append(calls, tool)
+		if tool == "preview_service_images" && (len(args.Items) != 2 || args.Items[0].Source == args.Items[1].Source) {
+			t.Error("role sources were collapsed")
+		}
+		if tool == "start_service_images" {
+			return nil, errors.New("submission unconfirmed; inspect before retrying")
+		}
+		return json.RawMessage(`{"status":"preparing"}`), nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
+	var decoded struct {
+		Servers map[string]struct {
+			URL string `json:"url"`
+		} `json:"mcpServers"`
+	}
+	if err := json.Unmarshal(config, &decoded); err != nil {
+		t.Fatal(err)
+	}
+	call := func(method string, params any) map[string]any {
+		t.Helper()
+		payload, _ := json.Marshal(map[string]any{"jsonrpc": "2.0", "id": 1, "method": method, "params": params})
+		resp, err := http.Post(decoded.Servers["multica-infrastructure"].URL, "application/json", bytes.NewReader(payload))
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer resp.Body.Close()
+		var body struct {
+			Result map[string]any `json:"result"`
+		}
+		if err := json.NewDecoder(resp.Body).Decode(&body); err != nil {
+			t.Fatal(err)
+		}
+		return body.Result
+	}
+	listed := map[string]map[string]any{}
+	for _, entry := range call("tools/list", nil)["tools"].([]any) {
+		tool := entry.(map[string]any)
+		listed[tool["name"].(string)] = tool
+	}
+	for _, name := range []string{"infra_list_service_images", "infra_preview_service_images", "infra_start_service_images"} {
+		if listed[name] == nil {
+			t.Fatalf("missing %s", name)
+		}
+	}
+	schema := listed["infra_preview_service_images"]["inputSchema"].(map[string]any)["properties"].(map[string]any)
+	if schema["items"].(map[string]any)["type"] != "array" {
+		t.Fatal("image items are not exposed as structured selections")
+	}
+	args := map[string]any{"connection_id": "manager-a", "cluster_id": 7, "service_id": 8, "action": "publish_images", "reason": "requested fix", "operation_id": "preview-a", "items": []map[string]string{{"key": "deployment/qa/a/worker", "source": "harbor.example/worker:fix"}, {"key": "deployment/qa/b/coordinator", "source": "harbor.example/coordinator:other"}}}
+	for _, name := range []string{"infra_list_service_images", "infra_preview_service_images", "infra_start_service_images"} {
+		result := call("tools/call", map[string]any{"name": name, "arguments": args})
+		if result["isError"] != (name == "infra_start_service_images") {
+			t.Fatalf("wrong image result: %v", result)
+		}
+	}
+	if len(calls) != 3 {
+		t.Fatalf("uncertain submission was retried: %v", calls)
+	}
+}

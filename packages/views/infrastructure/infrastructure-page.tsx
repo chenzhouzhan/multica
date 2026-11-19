@@ -25,6 +25,7 @@ import { ErrorMessage, ResourceTable } from "./components";
 import { ServiceCatalog } from "./service-catalog";
 import { ServiceRelationsDialog } from "./service-relations-dialog";
 import { ServiceResources } from "./service-resources";
+import { ServiceImages } from "./service-images";
 import { ServiceMetainfo } from "./service-metainfo";
 import { OperationHistory } from "./operation-history";
 import { useInfrastructureNavigation } from "./use-infrastructure-navigation";
@@ -56,7 +57,13 @@ export function InfrastructurePage() {
     : undefined;
   const href = (patch: Record<string, string | number | null>) =>
     infrastructureHref(p.infrastructure(), nav.searchParams, patch);
-  const listHref = href({ service: null, tab: null, hostname: null });
+  const listHref = href({
+    service: null,
+    tab: null,
+    hostname: null,
+    role_type: null,
+    image_operation: null,
+  });
   const view =
     nav.searchParams.get("view") === "nodes"
       ? "nodes"
@@ -349,7 +356,9 @@ function ServiceDetail({
       ? "logs"
       : nav.searchParams.get("tab") === "metainfo"
         ? "metainfo"
-        : "roles";
+        : nav.searchParams.get("tab") === "images"
+          ? "images"
+          : "roles";
   const href = (value: string) =>
     infrastructureHref(p.infrastructure(), nav.searchParams, { tab: value });
   return (
@@ -406,9 +415,25 @@ function ServiceDetail({
             label: t(($) => $.infrastructure.metainfo),
             href: href("metainfo"),
           },
+          {
+            value: "images",
+            label: t(($) => $.infrastructure.image_release.title),
+            href: href("images"),
+          },
         ]}
       />
-      {tab === "metainfo" ? (
+      {tab === "images" ? (
+        <ServiceImages
+          scope={{
+            ws,
+            connection: connection.id,
+            cluster,
+            service: service.id,
+          }}
+          service={service}
+          canManage={canManage}
+        />
+      ) : tab === "metainfo" ? (
         <ServiceMetainfo
           ws={ws}
           connection={connection}

@@ -27,7 +27,7 @@ Read the invariants below, then open the reference(s) your task actually needs
 | `references/autopilots.md` | Autopilots: schedule / webhook / manual triggers, `create_issue` vs `run_only`, why one did not fire |
 | `references/weekly-reports.md` | Personal weekly report drafts, submission, team overall progress, generated team reports |
 | `references/projects.md` | Projects and their durable resources (`github_repo`, `local_directory`, worktree mode); project workflows — status columns, handoffs, a `[Project workflow]` block in your prompt, reading or changing a workflow (`multica workflow`, `multica project workflow`) |
-| `references/infrastructure.md` | Manager connections, clusters, services, and reading or editing service metainfo |
+| `references/infrastructure.md` | Manager connections, clusters, service metainfo, role image publication and Pod restarts |
 | `references/runtimes.md` | Runtimes, daemons, `repo checkout`, and the task CLI boundary |
 | `references/skill-import.md` | Importing a skill into this workspace from a URL or a local archive |
 

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5"
@@ -107,6 +108,10 @@ func (h *Handler) SetInfrastructureGrants(w http.ResponseWriter, r *http.Request
 }
 
 func writeInfrastructureError(w http.ResponseWriter, err error) {
+	if errors.Is(err, service.ErrInfrastructureConflict) {
+		writeError(w, http.StatusConflict, err.Error())
+		return
+	}
 	if errors.Is(err, transwarp.ErrResponse) {
 		writeError(w, http.StatusBadGateway, err.Error())
 		return
@@ -178,14 +183,14 @@ func (h *Handler) executeInfrastructure(w http.ResponseWriter, r *http.Request, 
 		writeError(w, 404, "unknown infrastructure tool")
 		return
 	}
-	if tool == "save_metainfo_file" {
+	if tool == "save_metainfo_file" || tool == "preview_service_images" || tool == "start_service_images" {
 		if !principal.Valid {
-			writeError(w, 403, "metainfo edits require a workspace owner/admin human originator")
+			writeError(w, 403, "infrastructure writes require a workspace owner/admin human originator")
 			return
 		}
 		member, err := h.Queries.GetMemberByUserAndWorkspace(r.Context(), db.GetMemberByUserAndWorkspaceParams{UserID: principal, WorkspaceID: ws})
 		if err != nil || !roleAllowed(member.Role, "owner", "admin") {
-			writeError(w, 403, "metainfo edits require a workspace owner/admin human originator")
+			writeError(w, 403, "infrastructure writes require a workspace owner/admin human originator")
 			return
 		}
 	}
@@ -215,7 +220,29 @@ func (h *Handler) executeInfrastructure(w http.ResponseWriter, r *http.Request, 
 	}
 	var result any
 	var err error
-	if tool == "get_operation" {
+	if tool == "list_service_images" || tool == "preview_service_images" || tool == "start_service_images" {
+		if input.ClusterID <= 0 || input.ServiceID <= 0 {
+			writeError(w, 400, "positive cluster_id and service_id are required")
+			return
+		}
+		imageActor := service.ImageOperationActor{ID: actor, Type: actorType, TaskID: input.TaskID, OriginatorID: principal}
+		switch tool {
+		case "list_service_images":
+			result, err = h.Infrastructure.ImageResources(r.Context(), ws, conn, input.ClusterID, input.ServiceID)
+		case "preview_service_images":
+			if strings.TrimSpace(input.Reason) == "" {
+				writeError(w, 400, "a reason is required for image publication or Pod restart")
+				return
+			}
+			result, err = h.Infrastructure.PreviewImages(r.Context(), ws, conn, imageActor, input.ClusterID, input.ServiceID, service.ImagePreviewInput{Action: input.Action, Items: input.Items, Reason: input.Reason})
+		case "start_service_images":
+			id, ok := parseUUIDOrBadRequest(w, input.OperationID, "operation_id")
+			if !ok {
+				return
+			}
+			result, err = h.Infrastructure.StartImageOperation(r.Context(), ws, conn, imageActor, id, input.ClusterID, input.ServiceID)
+		}
+	} else if tool == "get_operation" {
 		id, ok := parseUUIDOrBadRequest(w, input.OperationID, "operation_id")
 		if !ok {
 			return

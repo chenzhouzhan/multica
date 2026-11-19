@@ -147,6 +147,10 @@ func (c *Client) request(ctx context.Context, method, path string, query url.Val
 	if len(data) > maxResponseBytes {
 		return fmt.Errorf("%w: Manager response exceeds the size limit", ErrResponse)
 	}
+	if target, ok := out.(*managerText); ok {
+		*target = managerText(decodeManagerText(data))
+		return nil
+	}
 	if err := json.Unmarshal(data, out); err != nil {
 		var mismatch *json.UnmarshalTypeError
 		if errors.As(err, &mismatch) {

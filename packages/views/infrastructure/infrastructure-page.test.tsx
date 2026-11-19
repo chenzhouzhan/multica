@@ -22,6 +22,7 @@ const mocked = vi.hoisted(() => ({
   metaFiles: vi.fn(),
   metaFile: vi.fn(),
   metaSave: vi.fn(),
+  images: vi.fn(),
 }));
 vi.mock("@multica/ui/components/ui/code-editor", () => ({
   CodeEditor: ({
@@ -61,6 +62,7 @@ vi.mock("@multica/core/api", () => ({
     setInfrastructureGrants: mocked.grants,
     saveInfrastructureConnection: mocked.save,
     deleteInfrastructureConnection: mocked.remove,
+    infrastructureImageResources: mocked.images,
   },
 }));
 const connections = ["a", "b"].map((id) => ({
@@ -237,6 +239,47 @@ async function openMeta(user: ReturnType<typeof userEvent.setup>) {
 }
 
 describe("infrastructure page", () => {
+  it("opens image publication from the current service role and selects its actual container", async () => {
+    const user = userEvent.setup();
+    mocked.images.mockResolvedValue({
+      configured: true,
+      targets: [
+        {
+          key: "deployment/qa/worker-a/worker",
+          role_type: "WORKER",
+          role_name: "Worker",
+          kind: "Deployment",
+          namespace: "qa",
+          workload: "worker-a",
+          uid: "uid-worker",
+          generation: 7,
+          container: "worker",
+          image: "registry.example/team/worker:custom",
+          replicas: 2,
+          blocked_reason: "",
+        },
+      ],
+    });
+    mount(true);
+    await openService(user);
+    await user.click(screen.getByRole("link", { name: "Update image" }));
+    expect(
+      await screen.findByRole("checkbox", {
+        name: "Select Worker · worker-a · worker",
+      }),
+    ).toBeChecked();
+    expect(mocked.images).toHaveBeenCalledWith({
+      ws: "workspace-a",
+      connection: "a",
+      cluster: 7,
+      service: 8,
+    });
+    expect(screen.getByTestId("location")).toHaveTextContent("service=8");
+    expect(screen.getByTestId("location")).toHaveTextContent("tab=images");
+    expect(screen.getByTestId("location")).toHaveTextContent(
+      "role_type=WORKER",
+    );
+  });
   it("uses a full service list and preserves filters when returning from details", async () => {
     const user = userEvent.setup();
     mount();

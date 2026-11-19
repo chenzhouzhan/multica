@@ -17,7 +17,7 @@ import (
 var infrastructureCmd = newInfrastructureCommand()
 
 func newInfrastructureCommand() *cobra.Command {
-	root := &cobra.Command{Use: "infrastructure", Aliases: []string{"infra"}, Short: "Read Manager resources and read or edit service metainfo"}
+	root := &cobra.Command{Use: "infrastructure", Aliases: []string{"infra"}, Short: "Manage service resources, metainfo, images and Pod restarts"}
 	add := func(parent *cobra.Command, name, help, tool string) *cobra.Command {
 		cmd := &cobra.Command{Use: name, Short: help, Args: exactArgs(0), RunE: func(cmd *cobra.Command, _ []string) error { return runInfrastructure(cmd, tool) }}
 		cmd.Flags().String("output", "json", "Output format: json; metainfo read also supports text")
@@ -43,6 +43,7 @@ func newInfrastructureCommand() *cobra.Command {
 	save.Flags().String("key", "", "Metainfo file key (required)")
 	save.Flags().String("file", "", "Local UTF-8 content file, or - for stdin (required)")
 	save.Flags().String("reason", "", "Reason for the change (required)")
+	addInfrastructureImagesCommands(root)
 	return root
 }
 
@@ -114,11 +115,21 @@ func runInfrastructure(cmd *cobra.Command, tool string) error {
 		}
 		input["content"], input["reason"] = string(content), reason
 	}
+	if strings.HasSuffix(tool, "service_images") || tool == "get_operation" {
+		if err := populateInfrastructureImageInput(cmd, tool, input); err != nil {
+			return err
+		}
+	}
 	ctx, cancel := cli.APIContext(context.Background())
 	defer cancel()
 	var result json.RawMessage
 	if err := client.PostJSON(ctx, "/api/workspaces/"+client.WorkspaceID+"/infrastructure/tools/"+tool, input, &result); err != nil {
 		return err
+	}
+	if strings.HasSuffix(tool, "service_images") || tool == "get_operation" {
+		if err := validateInfrastructureImageResponse(tool, input, result); err != nil {
+			return err
+		}
 	}
 	if tool == "read_metainfo_file" {
 		var file struct {

@@ -131,6 +131,7 @@ export function ServiceResources({
               t(($) => $.infrastructure.automatic_restart),
               t(($) => $.infrastructure.logs),
               t(($) => $.infrastructure.restart),
+              t(($) => $.infrastructure.image_release.title),
             ]}
             rows={(roles.data ?? []).map((role) => {
               const allowed = connection.restart_grants.some(
@@ -207,6 +208,21 @@ export function ServiceResources({
                   service={service}
                   allowed={allowed}
                 />,
+                <AppLink
+                  key="images"
+                  href={infrastructureHref(
+                    p.infrastructure(),
+                    nav.searchParams,
+                    {
+                      tab: "images",
+                      role_type: role.type,
+                      image_operation: null,
+                    },
+                  )}
+                  className="whitespace-nowrap rounded-sm text-caption text-brand hover:underline focus-visible:outline-2 focus-visible:outline-ring"
+                >
+                  {t(($) => $.infrastructure.image_release.update_role)}
+                </AppLink>,
               ];
             })}
             empty={t(($) =>
