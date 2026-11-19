@@ -760,7 +760,7 @@
     "back_to_services": "返回服务列表",
     "search_services": "查找服务名称、类型或版本…",
     "all_health": "全部健康状态",
-    "non_healthy": "非健康",
+    "non_healthy": "仅看异常",
     "all_products": "全部产品",
     "group_products": "按产品分组",
     "product": "产品",
@@ -781,6 +781,20 @@
     "restart_history": "角色重启记录",
     "operation_scope": "操作范围",
     "current_cluster": "当前集群",
-    "current_manager": "当前 Manager"
+    "current_manager": "当前 Manager",
+    "catalog": {
+      "products_count_other": "{{count}} 种产品",
+      "versions_count_other": "{{count}} 个版本",
+      "attention_count_other": "{{count}} 个待关注",
+      "all_healthy": "全部健康",
+      "version_unknown": "版本未知",
+      "showing": "显示 {{shown}} / {{total}} 个服务",
+      "health": {
+        "healthy": "健康",
+        "warning": "需关注",
+        "down": "不可用",
+        "unknown": "未知"
+      }
+    }
   }
 }

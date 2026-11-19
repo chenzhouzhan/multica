@@ -780,7 +780,7 @@
     "back_to_services": "Back to services",
     "search_services": "Find service name, type or version…",
     "all_health": "All health states",
-    "non_healthy": "Non-healthy",
+    "non_healthy": "Issues only",
     "all_products": "All products",
     "group_products": "Group by product",
     "product": "Product",
@@ -803,6 +803,23 @@
     "restart_history": "Role restart history",
     "operation_scope": "Operation scope",
     "current_cluster": "Current cluster",
-    "current_manager": "Current Manager"
+    "current_manager": "Current Manager",
+    "catalog": {
+      "products_count_one": "{{count}} product",
+      "products_count_other": "{{count}} products",
+      "versions_count_one": "{{count}} version",
+      "versions_count_other": "{{count}} versions",
+      "attention_count_one": "{{count}} needs attention",
+      "attention_count_other": "{{count}} need attention",
+      "all_healthy": "All healthy",
+      "version_unknown": "Unknown version",
+      "showing": "Showing {{shown}} of {{total}}",
+      "health": {
+        "healthy": "Healthy",
+        "warning": "Needs attention",
+        "down": "Down",
+        "unknown": "Unknown"
+      }
+    }
   }
 }

@@ -340,7 +340,7 @@ describe("infrastructure page", () => {
     const user = userEvent.setup();
     mount();
     expect(
-      await screen.findByRole("button", { name: /Studio.*Version 1/ }),
+      await screen.findByRole("button", { name: "Studio" }),
     ).toBeInTheDocument();
     await openService(user);
     expect(

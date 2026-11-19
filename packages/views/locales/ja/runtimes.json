@@ -760,7 +760,7 @@
     "back_to_services": "サービス一覧に戻る",
     "search_services": "サービス名・種類・バージョンを検索…",
     "all_health": "すべての正常性状態",
-    "non_healthy": "正常以外",
+    "non_healthy": "異常のみ",
     "all_products": "すべての製品",
     "group_products": "製品別に表示",
     "product": "製品",
@@ -781,6 +781,20 @@
     "restart_history": "ロールの再起動履歴",
     "operation_scope": "操作の範囲",
     "current_cluster": "現在のクラスター",
-    "current_manager": "現在の Manager"
+    "current_manager": "現在の Manager",
+    "catalog": {
+      "products_count_other": "{{count}} 製品",
+      "versions_count_other": "{{count}} バージョン",
+      "attention_count_other": "{{count}} 件の要確認",
+      "all_healthy": "すべて正常",
+      "version_unknown": "不明なバージョン",
+      "showing": "{{total}} サービス中 {{shown}} 件を表示",
+      "health": {
+        "healthy": "正常",
+        "warning": "要確認",
+        "down": "利用不可",
+        "unknown": "不明"
+      }
+    }
   }
 }

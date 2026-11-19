@@ -780,7 +780,7 @@
     "back_to_services": "Retour aux services",
     "search_services": "Rechercher un nom, type ou une version…",
     "all_health": "Tous les états de santé",
-    "non_healthy": "Non sain",
+    "non_healthy": "Anomalies seules",
     "all_products": "Tous les produits",
     "group_products": "Grouper par produit",
     "product": "Produit",
@@ -803,6 +803,23 @@
     "restart_history": "Historique des redémarrages de rôles",
     "operation_scope": "Périmètre des opérations",
     "current_cluster": "Cluster actuel",
-    "current_manager": "Manager actuel"
+    "current_manager": "Manager actuel",
+    "catalog": {
+      "products_count_one": "{{count}} produit",
+      "products_count_other": "{{count}} produits",
+      "versions_count_one": "{{count}} version",
+      "versions_count_other": "{{count}} versions",
+      "attention_count_one": "{{count}} à vérifier",
+      "attention_count_other": "{{count}} à vérifier",
+      "all_healthy": "Tous sains",
+      "version_unknown": "Version inconnue",
+      "showing": "{{shown}} sur {{total}} affichés",
+      "health": {
+        "healthy": "Sain",
+        "warning": "À vérifier",
+        "down": "Indisponible",
+        "unknown": "Inconnu"
+      }
+    }
   }
 }

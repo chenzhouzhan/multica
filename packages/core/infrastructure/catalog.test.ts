@@ -14,7 +14,7 @@ const service = (
 ) => InfrastructureServiceSchema.parse({ id, product });
 
 describe("cluster service catalog", () => {
-  it("keeps product versions separate and groups unassigned services together", () => {
+  it("groups products once with separate version sections and keeps unassigned services together", () => {
     const rows = [
       service(1, { type: "STUDIO", name: "Studio", version: "v1" }),
       service(2, { type: "STUDIO", name: "Studio", version: "v2" }),
@@ -25,14 +25,20 @@ describe("cluster service catalog", () => {
         name: "Other",
         version: "__FALLBACK__",
       }),
+      service(6, { type: "", name: "", version: "" }),
     ];
     const groups = groupInfrastructureProducts(rows);
     expect(groups.map((group) => group.services.map((row) => row.id))).toEqual([
-      [1, 3],
-      [2],
-      [4, 5],
+      [1, 2, 3],
+      [4, 5, 6],
     ]);
-    expect(groups[2]?.product).toBeNull();
+    expect(
+      groups[0]?.versions.map((version) =>
+        version.services.map((row) => row.id),
+      ),
+    ).toEqual([[1, 3], [2]]);
+    expect(groups[1]?.product).toBeNull();
+    expect(groups[1]?.versions).toHaveLength(1);
   });
   it("carries the Manager alongside cluster and service ids in navigation", () => {
     const a = new URL(
@@ -72,7 +78,7 @@ describe("cluster service catalog", () => {
     );
     expect(returned.searchParams.toString()).toBe(search.toString());
   });
-  it("filters by service metadata, health and exact product version", () => {
+  it("filters a product across its versions and searches version metadata", () => {
     const rows = [
       InfrastructureServiceSchema.parse({
         id: 1,
@@ -101,7 +107,21 @@ describe("cluster service catalog", () => {
       filterInfrastructureServices(rows, {
         search: "LOGITS",
         health: "unhealthy",
-        product: JSON.stringify(["LOGITS", "v2"]),
+        product: JSON.stringify(["LOGITS"]),
+      }).map((s) => s.id),
+    ).toEqual([2]);
+    expect(
+      filterInfrastructureServices(rows, {
+        search: "",
+        health: "all",
+        product: JSON.stringify(["LOGITS"]),
+      }).map((s) => s.id),
+    ).toEqual([1, 2]);
+    expect(
+      filterInfrastructureServices(rows, {
+        search: "v2",
+        health: "all",
+        product: "",
       }).map((s) => s.id),
     ).toEqual([2]);
     expect(

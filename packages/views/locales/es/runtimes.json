@@ -780,7 +780,7 @@
     "back_to_services": "Volver a servicios",
     "search_services": "Buscar nombre, tipo o versión…",
     "all_health": "Todos los estados de salud",
-    "non_healthy": "No saludable",
+    "non_healthy": "Solo incidencias",
     "all_products": "Todos los productos",
     "group_products": "Agrupar por producto",
     "product": "Producto",
@@ -803,6 +803,23 @@
     "restart_history": "Historial de reinicios de roles",
     "operation_scope": "Ámbito de operaciones",
     "current_cluster": "Clúster actual",
-    "current_manager": "Manager actual"
+    "current_manager": "Manager actual",
+    "catalog": {
+      "products_count_one": "{{count}} producto",
+      "products_count_other": "{{count}} productos",
+      "versions_count_one": "{{count}} versión",
+      "versions_count_other": "{{count}} versiones",
+      "attention_count_one": "{{count}} requiere atención",
+      "attention_count_other": "{{count}} requieren atención",
+      "all_healthy": "Todos correctos",
+      "version_unknown": "Versión desconocida",
+      "showing": "Mostrando {{shown}} de {{total}}",
+      "health": {
+        "healthy": "Correcto",
+        "warning": "Requiere atención",
+        "down": "No disponible",
+        "unknown": "Desconocido"
+      }
+    }
   }
 }

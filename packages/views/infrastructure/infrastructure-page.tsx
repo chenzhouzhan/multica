@@ -12,6 +12,7 @@ import {
   infrastructureServicesOptions,
   infrastructureResourceKey,
   infrastructureHref,
+  groupInfrastructureProducts,
   type InfrastructureConnection,
   type InfrastructureService,
 } from "@multica/core/infrastructure";
@@ -62,6 +63,13 @@ export function InfrastructurePage() {
       : nav.searchParams.get("view") === "history"
         ? "history"
         : "services";
+  const products = groupInfrastructureProducts(services.data ?? []).filter(
+    (group) => group.product !== null,
+  );
+  const versionCount = products.reduce(
+    (count, group) => count + group.versions.length,
+    0,
+  );
   useEffect(() => {
     if (
       connection &&
@@ -115,16 +123,18 @@ export function InfrastructurePage() {
             </>
           )}
         </nav>
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          aria-label={t(($) => $.infrastructure.refresh)}
-          onClick={() =>
-            q.invalidateQueries({ queryKey: ["infrastructure", ws] })
-          }
-        >
-          <RefreshCw />
-        </Button>
+        {serviceId && (
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label={t(($) => $.infrastructure.refresh)}
+            onClick={() =>
+              q.invalidateQueries({ queryKey: ["infrastructure", ws] })
+            }
+          >
+            <RefreshCw />
+          </Button>
+        )}
       </header>
       <div className="min-h-0 flex-1 overflow-y-auto">
         <div className="mx-auto flex w-full max-w-[100rem] min-w-0 flex-col gap-5 px-4 py-6 sm:px-8">
@@ -181,15 +191,49 @@ export function InfrastructurePage() {
               </>
             ) : (
               <>
-                <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pb-1">
-                  <h1 className="text-heading font-semibold">{cluster.name}</h1>
-                  {services.data && (
-                    <span className="text-caption text-muted-foreground">
-                      {t(($) => $.infrastructure.services_count, {
-                        count: services.data.length,
-                      })}
-                    </span>
-                  )}
+                <div className="flex flex-wrap items-center justify-between gap-3 pb-1">
+                  <div className="grid gap-2">
+                    <h1 className="text-heading font-semibold">
+                      {cluster.name}
+                    </h1>
+                    {services.data && (
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-caption text-muted-foreground">
+                        <span>
+                          {t(($) => $.infrastructure.services_count, {
+                            count: services.data.length,
+                          })}
+                        </span>
+                        {products.length > 0 && (
+                          <>
+                            <span aria-hidden="true">·</span>
+                            <span>
+                              {t(
+                                ($) => $.infrastructure.catalog.products_count,
+                                { count: products.length },
+                              )}
+                            </span>
+                            <span aria-hidden="true">·</span>
+                            <span>
+                              {t(
+                                ($) => $.infrastructure.catalog.versions_count,
+                                { count: versionCount },
+                              )}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      q.invalidateQueries({ queryKey: ["infrastructure", ws] })
+                    }
+                  >
+                    <RefreshCw className="size-3.5" />
+                    {t(($) => $.infrastructure.refresh)}
+                  </Button>
                 </div>
                 <InfrastructureTabs
                   label={t(($) => $.infrastructure.cluster)}
@@ -214,6 +258,7 @@ export function InfrastructurePage() {
                 />
                 {view === "services" ? (
                   <ServiceCatalog
+                    key={`${ws}:${connection.id}:${cluster.id}`}
                     services={services.data ?? []}
                     loading={services.isPending}
                   />
@@ -260,7 +305,10 @@ export function InfrastructureTabs({
   items: { value: string; label: string; href: string }[];
 }) {
   return (
-    <nav aria-label={label} className="flex shrink-0 gap-6 border-b">
+    <nav
+      aria-label={label}
+      className="flex shrink-0 gap-6 overflow-x-auto border-b"
+    >
       {items.map((item) => (
         <AppLink
           key={item.value}

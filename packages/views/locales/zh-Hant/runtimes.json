@@ -760,7 +760,7 @@
     "back_to_services": "返回服務清單",
     "search_services": "尋找服務名稱、類型或版本…",
     "all_health": "所有健康狀態",
-    "non_healthy": "非健康",
+    "non_healthy": "僅看異常",
     "all_products": "所有產品",
     "group_products": "按產品分組",
     "product": "產品",
@@ -781,6 +781,20 @@
     "restart_history": "角色重新啟動記錄",
     "operation_scope": "操作範圍",
     "current_cluster": "目前叢集",
-    "current_manager": "目前 Manager"
+    "current_manager": "目前 Manager",
+    "catalog": {
+      "products_count_other": "{{count}} 種產品",
+      "versions_count_other": "{{count}} 個版本",
+      "attention_count_other": "{{count}} 個待關注",
+      "all_healthy": "全部健康",
+      "version_unknown": "版本未知",
+      "showing": "顯示 {{shown}} / {{total}} 個服務",
+      "health": {
+        "healthy": "健康",
+        "warning": "需關注",
+        "down": "無法使用",
+        "unknown": "未知"
+      }
+    }
   }
 }
