@@ -13,15 +13,14 @@ import (
 	"github.com/multica-ai/multica/server/internal/cli"
 )
 
-// View commands — read the saved issue views a member can open, and the
-// issues each one lists.
+// View commands manage saved issue views and read the issues each one lists.
 
 const viewIssuesMaxPageSize = 100
 
 var viewCmd = &cobra.Command{
 	Use:   "view",
-	Short: "Read saved issue views and the issues they list",
-	Long: `Read saved issue views and the issues they list.
+	Short: "Manage saved issue views and read the issues they list",
+	Long: `Manage saved issue views and read the issues they list.
 
 A view is the caller's own or a workspace-shared saved filter. Inside an agent
 run the caller is the runtime owner, so the views listed and any "my" scope or
@@ -59,6 +58,8 @@ func init() {
 	viewCmd.AddCommand(viewListCmd)
 	viewCmd.AddCommand(viewGetCmd)
 	viewCmd.AddCommand(viewIssuesCmd)
+	viewCmd.AddCommand(newViewCreateCmd())
+	viewCmd.AddCommand(newViewUpdateCmd())
 
 	viewListCmd.Flags().String("scope", "", "Only views of this scope: workspace, my, or project")
 	viewListCmd.Flags().String("project", "", "Only views of this project (ID or ID prefix)")

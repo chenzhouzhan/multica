@@ -288,7 +288,7 @@ multica autopilot trigger-add <autopilot-id> --cron "0 9 * * 1" --timezone Asia/
 | `project` | 管理项目、项目资源和项目使用的工作流 |
 | `workflow` | 管理工作流：状态以及每个状态交给谁处理 |
 | `label`、`property` | 管理工作区标签和自定义属性 |
-| `view` | 读取保存的视图，列出视图里的任务 |
+| `view` | 创建、修改和读取保存的视图，列出视图里的任务 |
 | `agent`、`skill`、`squad` | 管理智能体、skill 和小队 |
 | `autopilot` | 管理自动化、触发器和运行历史 |
 | `workspace` | 创建、查看、切换工作区和邀请成员 |
@@ -350,6 +350,23 @@ CLI 配置文件包含可代表你访问 Multica 的令牌。不要提交到仓�
 
 从旧 CSV 解析方式迁移：要添加两个文件，将 `--attachment a,b` 改为 `--attachment a --attachment b`。前一种写法现在只选择名为 `a,b` 的单个文件。旧用法 `--attachment '"report,final.csv"'` 中额外的 CSV 双引号也须移除，改用 `--attachment 'report,final.csv'`；只有文件名本身包含双引号时才保留。
 
+### 保存的视图
+
+`view create` 默认创建工作区范围的私有视图。加 `--visibility workspace` 可共享给工作区；加 `--project <id-or-prefix>` 可创建项目视图。`--scope my` 必须指定 `--scope-variant assigned`、`created`、`involved` 或 `any`，且始终为私有视图。
+
+`--query` 和 `--display` 接受与 `view get` 返回结果相同结构的 JSON 对象，也可以通过 `--query-file` 和 `--display-file` 读取 UTF-8 文件。传入的对象会整体替换对应的筛选或展示配置；修改时未传入的字段保持原值，`{}` 可清空对应对象。JSON 中的项目、标签、属性及选项使用 `project list`、`label list` 和 `property list` 查到的 ID。
+
+```bash
+multica view create --name "高优先级任务" --visibility workspace \
+  --query '{"priorityFilters":["high"]}' \
+  --display '{"viewMode":"table","tableColumns":[{"key":"title"},{"key":"priority"},{"key":"assignee"},{"key":"status"}]}'
+multica view get "高优先级任务"
+# 使用 get 返回的 revision，例如 3：
+multica view update "高优先级任务" --expected-revision 3 --name "优先级评审"
+```
+
+修改时必须通过 `--expected-revision` 传入读取到的修订号。如有冲突，重新读取并核对更改后再提交。视图所有者可修改自己的视图，工作区管理员和所有者也可修改共享视图。创建后不能更换视图范围或所属项目。这些命令只保存视图定义，不修改筛选出的任务。
+
 ### Core
 
 | 命令 | 子命令 | 用途 | 关键 flag |
@@ -385,6 +402,7 @@ CLI 配置文件包含可代表你访问 Multica 的令牌。不要提交到仓�
 | `label` | `list/get/create/update/delete` | 管理工作区标签 | `list`：`--resource-type`（`issue` 或 `skill`）、`--full-id`；`create`：`--name`、`--color`、`--resource-type`（`issue` 或 `skill`）、`--description` |
 | `property` | `list/get/create/update/archive/unarchive` | 管理工作区自定义属性 | `create`：`--name`、`--type`（`text`、`number`、`select`、`multi_select`、`date`、`checkbox`、`url`、`actor`、`multi_actor`、`multi_text`、`multi_url`）、`--option`（可重复，仅 select 类型）；`list`：`--include-archived`；类型创建后不可修改 |
 | `view` | `list/get/issues` | 读取你能打开的视图（自己的和工作区共享的）；`issues` 按视图保存的排序列出视图里的任务，视图保存的全部筛选条件都由服务端执行。在智能体运行中，看到的视图和其中「我的」条件都属于运行时的所有者 | `<view>` 接受 ID、ID 前缀或完整名称；`list`：`--scope`（`workspace`、`my`、`project`）、`--project`、`--full-id`；`issues`：`--limit`（最多 100）、`--cursor`（上一页的 `next_cursor`）、`--today`（相对到期日筛选按哪一天计算，默认今天）、`--fields`（仅 JSON）、`--full-id` |
+| | `create/update <view>` | 创建或修改保存的视图；创建不传位置参数 | `--name`（创建必填）、`--visibility`、`--scope-variant`、`--query` / `--query-file`、`--display` / `--display-file`；JSON 对象整体替换对应配置。`create`：`--scope`（默认 `workspace`）、`--project`；`update`：`--expected-revision`（必填，取自 `get`）。新视图默认私有 |
 | `agent` | `list/get/create/update/archive/restore` | 管理智能体 | `--name`、`--runtime-id`（`create` 必填）、`--instructions`、`--conversation-starters`、`--model`、`--thinking-level`、`--custom-env` / `--custom-env-file` / `--custom-env-stdin`（仅 `create`）、`--custom-args`、`--mcp-config` / `--mcp-config-file` / `--mcp-config-stdin`、`--permission-mode`、`--visibility`（旧写法）、`--max-concurrent-tasks` |
 | | `copy <agent-id>` | 复制为新智能体，原智能体不受影响 | `--name`（默认为原名加 ` (copy)`）、`--runtime-id`（复制到其他运行时时必须同时指定 `--model`）、`--no-skills`；`custom_env`、`mcp_config`、`runtime_config` 等机密配置不会复制，需用与 `create` 相同的 flag 重新提供 |
 | | `tasks <id>` | 查看智能体的运行 | |

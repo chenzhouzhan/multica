@@ -141,6 +141,60 @@ while `has_more` is true, pass `next_cursor` to `--cursor`. Views and their
 "me" conditions resolve against the runtime owner, so a member's private view
 is only visible when that member owns the runtime.
 
+Create and edit saved views with `view create` and `view update`. These save
+the view definition; they do not change the issues it selects. New views
+default to `--scope workspace --visibility private`. Pass `--visibility
+workspace` to share one. `--project <id-or-prefix>` creates a project view;
+`--scope my` requires `--scope-variant assigned|created|involved|any` and is
+always private. Workspace/project views also accept `--scope-variant
+all|members|agents`.
+
+`--query` and `--display` accept JSON objects in the same shape as `view get`;
+`--query-file` and `--display-file` read UTF-8 JSON files instead. Each supplied
+object replaces that whole saved object; omitted objects stay unchanged on
+update, and `{}` clears one. Resolve references with `project list`, `label
+list --resource-type issue`, and `property list --output json` first. Use real
+project, label, property, and option IDs in the JSON, not their display names.
+For example, a workspace view with project, label, and select-property filters:
+
+```json
+{
+  "projectFilters": ["<project-id>"],
+  "labelFilters": ["<label-id>"],
+  "propertyFilters": {"<property-id>": ["<option-id>"]}
+}
+```
+
+Save that as `query.json`. To show a table with title, priority, assignee, and
+status columns, save this as `display.json`:
+
+```json
+{
+  "viewMode": "table",
+  "tableColumns": [
+    {"key": "title"}, {"key": "priority"},
+    {"key": "assignee"}, {"key": "status"}
+  ]
+}
+```
+
+```bash
+multica view create --name "Release requirements" --visibility workspace \
+  --query-file ./query.json --display-file ./display.json
+multica view get "Release requirements"
+# Use the revision returned by get, for example 3:
+multica view update "Release requirements" --expected-revision 3 \
+  --display-file ./display.json
+```
+
+Updates require `--expected-revision` from the view you read. A conflict means
+someone edited it: read again, reconcile changes, then retry with that revision.
+Do not retry blindly or overwrite another member's changes. Only the owner or,
+for a workspace-shared view, a workspace admin/owner can edit it. Scope and
+project cannot be changed after creation. Verify the selected issues with
+`view issues` after saving; creating a view does not add missing custom
+properties or select options.
+
 ## Custom properties: typed workflow state
 
 Workspaces may define custom issue properties (Severity, Environment, QA
