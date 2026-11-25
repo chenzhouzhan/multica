@@ -30,14 +30,9 @@ const mockReload = vi.hoisted(() => vi.fn());
 const mockToastWarning = vi.hoisted(() => vi.fn());
 const mockToastError = vi.hoisted(() => vi.fn());
 const mockToastSuccess = vi.hoisted(() => vi.fn());
-const mockSetTheme = vi.hoisted(() => vi.fn());
 const mockSetUser = vi.hoisted(() => vi.fn());
 const userRef = vi.hoisted(() => ({
   current: null as { id: string; timezone?: string | null } | null,
-}));
-
-vi.mock("@multica/ui/components/common/theme-provider", () => ({
-  useTheme: () => ({ theme: "light", setTheme: mockSetTheme }),
 }));
 
 vi.mock("@multica/core/i18n/react", async () => {
@@ -66,6 +61,9 @@ vi.mock("@multica/core/chat", () => ({
     { getState: () => chatState },
   ),
 }));
+
+// Reads the workspace's agents; covered by its own test.
+vi.mock("./quick-chat-agent-row", () => ({ QuickChatAgentRow: () => null }));
 
 vi.mock("@multica/core/paths", () => ({
   useCurrentWorkspace: () => ({ id: "ws-1", name: "Acme" }),
@@ -104,7 +102,6 @@ vi.mock("@multica/core/auth", async () => {
 });
 
 import { PreferencesTab } from "./preferences-tab";
-import { APPEARANCE_STORAGE_KEY, useAppearanceStore } from "@multica/core/appearance";
 import { useCommentComposerStore } from "@multica/core/issues/stores";
 import { useIssueOpeningStore } from "@multica/core/issues/stores/issue-opening-store";
 import {
@@ -159,40 +156,6 @@ describe("PreferencesTab — Language switcher", () => {
     expect(mockPersist).not.toHaveBeenCalled();
     expect(mockUpdateMe).not.toHaveBeenCalled();
     expect(mockReload).not.toHaveBeenCalled();
-  });
-
-  it("applies the theme on this device without announcing success", async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    render(<PreferencesTab />, { wrapper: I18nWrapper });
-
-    const group = screen.getByRole("group", { name: "Theme" });
-    expect(within(group).getByRole("button", { name: "Light" })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
-    await user.click(within(group).getByRole("button", { name: "Dark" }));
-
-    expect(mockSetTheme).toHaveBeenCalledWith("dark");
-    expect(mockToastSuccess).not.toHaveBeenCalled();
-  });
-
-  it("changes and persists the color theme independently of light/dark mode", async () => {
-    useAppearanceStore.setState({ colorTheme: "soft" });
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    render(<PreferencesTab />, { wrapper: I18nWrapper });
-
-    const group = screen.getByRole("group", { name: "Color theme" });
-    expect(within(group).getByRole("button", { name: "Soft" })).toHaveAttribute(
-      "aria-pressed", "true",
-    );
-    await user.click(within(group).getByRole("button", { name: "Gray" }));
-    expect(within(group).getByRole("button", { name: "Gray" })).toHaveAttribute(
-      "aria-pressed", "true",
-    );
-    expect(JSON.parse(localStorage.getItem(APPEARANCE_STORAGE_KEY)!).state.colorTheme).toBe("gray");
-    expect(mockSetTheme).not.toHaveBeenCalled();
-    expect(mockUpdateMe).not.toHaveBeenCalled();
-    act(() => useAppearanceStore.getState().setColorTheme("soft"));
   });
 
   it.each([
@@ -452,8 +415,8 @@ describe("PreferencesTab — Scope", () => {
   it("labels where each group of settings is stored", () => {
     render(<PreferencesTab />, { wrapper: I18nWrapper });
     expect(screen.getByText("Account · synced")).toBeInTheDocument();
-    // Appearance, opening issues, comments & chat.
-    expect(screen.getAllByText("This device only")).toHaveLength(3);
+    // Opening issues, comments & chat.
+    expect(screen.getAllByText("This device only")).toHaveLength(2);
   });
 
   it("switches what clicking a card or row opens, and says what Shift does", async () => {

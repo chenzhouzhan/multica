@@ -1,3 +1,4 @@
+import type docs from "../locales/en/docs.json";
 import "i18next";
 import type weeklyReports from "../locales/en/weekly-reports.json";
 // Pulls in the `ui` namespace augmentation owned by packages/ui — see
@@ -45,6 +46,7 @@ import type billing from "../locales/en/billing.json";
 // selector form standalone without depending on @multica/views.
 declare global {
   interface I18nResources {
+    docs: typeof docs;
     common: typeof common;
     auth: typeof auth;
     settings: typeof settings;

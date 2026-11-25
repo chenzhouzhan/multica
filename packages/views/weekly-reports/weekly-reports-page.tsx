@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "@multica/core/auth";
+import { useReducedMotion } from "@multica/core/appearance";
 import { useCurrentWorkspace, useWorkspacePaths } from "@multica/core/paths";
 import {
   weeklyWeekOptions,
@@ -75,6 +76,7 @@ function TeamRead({
 }) {
   const { t } = useT("weekly-reports");
   const locale = useLocale();
+  const reduceMotion = useReducedMotion();
   const scroll = useRef<HTMLDivElement>(null);
   const overview =
     report.snapshot?.overview ?? report.draft ?? emptyWeeklyOverview();
@@ -89,9 +91,7 @@ function TeamRead({
           target.getBoundingClientRect().top -
           container.getBoundingClientRect().top -
           60,
-        behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
-          ? "auto"
-          : "smooth",
+        behavior: reduceMotion ? "auto" : "smooth",
       });
   };
   const exportReport = (snapshot: WeeklySnapshot) =>
