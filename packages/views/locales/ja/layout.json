@@ -126,7 +126,7 @@
     "copy_workspace_link": "ワークスペースのリンクをコピー",
     "workspace_meta_other": "{{slug}} · メンバー {{count}} 人",
     "docs": "文書",
-    "clusters": "クラスター"
+    "clusters": "インフラ"
   },
   "bottom_bar": {
     "label": "ステータスバー",

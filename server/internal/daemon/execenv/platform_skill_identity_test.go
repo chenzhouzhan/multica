@@ -137,7 +137,7 @@ func TestPlatformSkillDomainsMatchDescription(t *testing.T) {
 			break
 		}
 	}
-	_, after, ok := strings.Cut(description, "does not fully cover: ")
+	_, after, ok := strings.Cut(description, "beyond the runtime brief: ")
 	domains, _, ok2 := strings.Cut(after, ". ")
 	if !ok || !ok2 {
 		t.Fatalf("cannot find the domain list in the description %q; update this parser with the new wording", description)
