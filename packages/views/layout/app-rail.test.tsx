@@ -165,7 +165,7 @@ describe("AppRail clusters", () => {
     state.pathname = "/acme/infrastructure";
     renderRail();
     expect(link("/acme/infrastructure")).toHaveAttribute("aria-current", "page");
-    expect(link("/acme/infrastructure")).toHaveTextContent("Clusters");
+    expect(link("/acme/infrastructure")).toHaveTextContent("Infra");
   });
 });
 const railOrder = () =>

@@ -284,7 +284,7 @@ describe("infrastructure page", () => {
     const user = userEvent.setup();
     mount();
     const search = await screen.findByRole("textbox", {
-      name: "Find service name, type or version…",
+      name: "Find service name, type or version...",
     });
     expect(
       mocked.query.mock.calls.some(([, tool]) => tool === "list_roles"),
@@ -293,13 +293,13 @@ describe("infrastructure page", () => {
     await openService(user);
     expect(
       screen.queryByRole("textbox", {
-        name: "Find service name, type or version…",
+        name: "Find service name, type or version...",
       }),
     ).not.toBeInTheDocument();
     await user.click(screen.getByRole("link", { name: "Back to services" }));
     expect(
       await screen.findByRole("textbox", {
-        name: "Find service name, type or version…",
+        name: "Find service name, type or version...",
       }),
     ).toHaveValue("Service");
     expect(screen.getByTestId("location")).toHaveTextContent("q=Service");
@@ -481,7 +481,7 @@ describe("infrastructure page", () => {
     await user.click(screen.getByRole("link", { name: "Back to services" }));
     expect(
       await screen.findByRole("textbox", {
-        name: "Find service name, type or version…",
+        name: "Find service name, type or version...",
       }),
     ).toBeVisible();
   });
@@ -514,7 +514,7 @@ describe("infrastructure page", () => {
     );
     expect(
       await screen.findByRole("textbox", {
-        name: "Find service name, type or version…",
+        name: "Find service name, type or version...",
       }),
     ).toBeVisible();
   });

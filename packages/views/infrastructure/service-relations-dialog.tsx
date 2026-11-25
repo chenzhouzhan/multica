@@ -39,7 +39,7 @@ export function ServiceRelationsDialog(props: {
         <GitBranch />
         {t(($) => $.infrastructure.service_relations)}
       </DialogTrigger>
-      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-5xl">
+      <DialogContent className="max-h-[85%] overflow-y-auto sm:max-w-5xl">
         <DialogHeader>
           <DialogTitle>{`${props.service.name} · ${t(($) => $.infrastructure.service_relations)}`}</DialogTitle>
           <DialogDescription>

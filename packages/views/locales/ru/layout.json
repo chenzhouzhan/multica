@@ -100,7 +100,7 @@
     "workspace_meta_many": "{{slug}} · {{count}} участников",
     "workspace_meta_other": "{{slug}} · {{count}} участника",
     "docs": "Доки",
-    "clusters": "Кластеры"
+    "clusters": "Класт."
   },
   "bottom_bar": {
     "label": "Строка состояния",

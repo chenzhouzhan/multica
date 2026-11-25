@@ -153,7 +153,7 @@ export function ServiceCatalog({
         <td className="px-4 py-3">
           <AppLink
             href={serviceHref(service.id)}
-            className="block min-w-0 rounded-sm outline-none hover:text-brand focus-visible:outline-2 focus-visible:outline-ring"
+            className="block min-w-0 rounded-sm outline-none hover:text-brand focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-ring"
           >
             <span className="block break-words text-body font-medium">
               {service.name}
@@ -183,7 +183,7 @@ export function ServiceCatalog({
           <AppLink
             href={serviceHref(service.id)}
             aria-label={`${t(($) => $.infrastructure.service)} · ${service.name}`}
-            className="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground outline-none hover:bg-surface-selected hover:text-surface-selected-foreground focus-visible:outline-2 focus-visible:outline-ring"
+            className="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground outline-none hover:bg-surface-selected hover:text-surface-selected-foreground focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-ring"
           >
             <ArrowRight className="size-3.5" />
           </AppLink>

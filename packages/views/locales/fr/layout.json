@@ -128,7 +128,7 @@
     "workspace_meta_one": "{{slug}} · {{count}} membre",
     "workspace_meta_other": "{{slug}} · {{count}} membres",
     "docs": "Docs",
-    "clusters": "Clusters"
+    "clusters": "Infra"
   },
   "bottom_bar": {
     "label": "Barre d'état",

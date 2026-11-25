@@ -109,7 +109,7 @@ describe("product catalog layout", () => {
     ).not.toBeInTheDocument();
     await user.type(
       screen.getByRole("textbox", {
-        name: "Find service name, type or version…",
+        name: "Find service name, type or version...",
       }),
       "hdfs",
     );

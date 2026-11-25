@@ -86,7 +86,7 @@ export function ConnectionDialog({
           )}
         </span>
       </DialogTrigger>
-      <DialogContent className="max-h-[85vh] overflow-y-auto">
+      <DialogContent className="max-h-[85%] overflow-y-auto">
         <form onSubmit={submit} className="grid gap-4">
           <DialogHeader>
             <DialogTitle>

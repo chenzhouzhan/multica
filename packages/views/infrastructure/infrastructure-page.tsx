@@ -117,7 +117,7 @@ export function InfrastructurePage() {
               <ChevronRight className="size-3 shrink-0" aria-hidden="true" />
               <AppLink
                 href={listHref}
-                className="truncate rounded-sm hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
+                className="truncate rounded-sm hover:text-foreground focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-ring"
               >
                 {cluster.name}
               </AppLink>
@@ -162,7 +162,7 @@ export function InfrastructurePage() {
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <AppLink
                     href={listHref}
-                    className="inline-flex items-center gap-2 rounded-sm text-caption text-muted-foreground hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
+                    className="inline-flex items-center gap-2 rounded-sm text-caption text-muted-foreground hover:text-foreground focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-ring"
                   >
                     <ArrowLeft className="size-3.5" />
                     {t(($) => $.infrastructure.back_to_services)}
@@ -322,7 +322,7 @@ export function InfrastructureTabs({
           href={item.href}
           aria-current={value === item.value ? "page" : undefined}
           className={cn(
-            "-mb-px whitespace-nowrap border-b-2 px-0.5 pb-3 pt-1 text-body outline-none focus-visible:outline-2 focus-visible:outline-ring",
+            "-mb-px whitespace-nowrap border-b-2 px-0.5 pb-3 pt-1 text-body outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-ring",
             value === item.value
               ? "border-foreground font-medium text-foreground hover:text-foreground"
               : "border-transparent text-muted-foreground hover:text-foreground",

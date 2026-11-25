@@ -154,7 +154,7 @@ export function ExecutionAccessDialog({
       <DialogTrigger render={<Button variant="outline" size="sm" />}>
         {t(($) => $.infrastructure.image_release.settings)}
       </DialogTrigger>
-      <DialogContent className="max-h-[85dvh] overflow-y-auto">
+      <DialogContent className="max-h-[85%] overflow-y-auto">
         <form
           className="grid gap-4"
           onSubmit={(event) => {

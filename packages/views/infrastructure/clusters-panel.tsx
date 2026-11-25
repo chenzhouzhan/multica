@@ -172,7 +172,7 @@ export function ClustersPanel() {
               {t(($) => $.infrastructure.manage_managers)}
             </DialogTrigger>
             <DialogContent
-              className="max-h-[85dvh] overflow-y-auto sm:max-w-2xl"
+              className="max-h-[85%] overflow-y-auto sm:max-w-2xl"
               aria-describedby={undefined}
             >
               <DialogHeader>
